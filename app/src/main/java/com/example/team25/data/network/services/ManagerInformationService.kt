@@ -2,6 +2,7 @@ package com.example.team25.data.network.services
 
 import com.example.team25.data.network.dto.ManagerCommentRequest
 import com.example.team25.data.network.dto.ManagerCommentResponse
+import com.example.team25.data.network.dto.ManagerLocationRequest
 import com.example.team25.data.network.dto.ManagerLocationResponse
 import com.example.team25.data.network.dto.ManagerTimeResponse
 import com.example.team25.dto.DaySchedule
@@ -23,7 +24,7 @@ interface ManagerInformationService {
     @PATCH("/api/manager/location/{manager_id}")
     suspend fun changeLocation(
         @Path("manager_id") managerId: String,
-        @Body locationRequest: ManagerCommentRequest
+        @Body locationRequest: ManagerLocationRequest
     ): Response<ManagerLocationResponse>
 
     @POST("/api/manager/time/{manager_id}")
