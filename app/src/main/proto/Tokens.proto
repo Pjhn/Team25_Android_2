@@ -6,4 +6,6 @@ option java_outer_classname = "TokensProto";
 message Tokens {
     string access_token = 1;
     string refresh_token = 2;
+    int64 accessTokenExpiresIn = 3;
+    int64 refreshTokenExpiresIn = 4;
 }
