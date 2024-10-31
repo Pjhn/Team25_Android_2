@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.example.team25.R
 import com.example.team25.databinding.ActivityEditWorkTimeBinding
 import com.example.team25.data.network.dto.DayScheduleDto
+import com.example.team25.dto.DaySchedule
 import com.example.team25.utils.DropdownUtils
 
 class EditWorkTimeActivity : AppCompatActivity() {

@@ -15,9 +15,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 abstract class ViewmodelModule {
-    @Binds
-    @ViewModelScoped
-    abstract fun bindLoginRepository(defaultLoginRepository: DefaultLoginRepository): LoginRepository
 
     @Binds
     @ViewModelScoped

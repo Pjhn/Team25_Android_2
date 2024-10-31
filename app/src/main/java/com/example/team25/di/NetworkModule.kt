@@ -3,6 +3,7 @@ package com.example.team25.di
 import androidx.datastore.core.DataStore
 import com.example.team25.BuildConfig
 import com.example.team25.TokensProto.Tokens
+import com.example.team25.data.network.authenticator.HttpAuthenticator
 import com.example.team25.data.network.interceptor.TokenInterceptor
 import com.example.team25.data.network.services.ManagerService
 import com.example.team25.data.remote.SignIn
@@ -21,9 +22,10 @@ object NetworkModule {
     @Provides
     @Singleton
     @GeneralOkHttpClient
-    fun provideOkHttpClient(tokenInterceptor: TokenInterceptor): OkHttpClient {
+    fun provideOkHttpClient(tokenInterceptor: TokenInterceptor, httpAuthenticator: HttpAuthenticator): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(tokenInterceptor)
+            .authenticator(httpAuthenticator)
             .build()
     }
 
