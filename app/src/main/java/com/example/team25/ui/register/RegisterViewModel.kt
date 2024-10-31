@@ -4,8 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
-import com.amazonaws.services.s3.AmazonS3Client
 import com.example.team25.data.network.dto.ManagerRegisterDto
 import com.example.team25.domain.model.Gender
 import com.example.team25.domain.model.ImageFolder
@@ -106,6 +104,7 @@ class RegisterViewModel @Inject constructor(
             _registerState.value = result
 
             _isRegistered.value = result.isSuccess
+            logManagerInfo()
             Log.d(TAG, _isRegistered.value.toString())
         }
     }
