@@ -46,6 +46,8 @@ class LoginEntryActivity : AppCompatActivity() {
                     Log.d("testt", role.toString())
                     navigateBasedOnRoleAuto(role)
 
+                } else {
+                    binding.kakaoLoginBtn.visibility = View.VISIBLE
                 }
             }
         }
@@ -168,7 +170,6 @@ class LoginEntryActivity : AppCompatActivity() {
 
                 loginViewModel.login(accessToken)
                 Log.d(TAG, accessToken)
-                checkRole()
             }
         }
     }
