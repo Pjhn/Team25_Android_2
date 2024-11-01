@@ -10,4 +10,6 @@ interface LoginRepository {
 
     suspend fun getSavedTokens(): Tokens?
 
+    suspend fun logout()
+
 }

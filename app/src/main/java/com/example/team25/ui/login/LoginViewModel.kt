@@ -7,6 +7,7 @@ import com.example.team25.data.network.dto.TokenDto
 import com.example.team25.di.IoDispatcher
 import com.example.team25.domain.usecase.GetSavedTokensUseCase
 import com.example.team25.domain.usecase.LoginUseCase
+import com.example.team25.domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val getSavedTokensUseCase: GetSavedTokensUseCase,
+    private val logoutUseCase: LogoutUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -52,6 +54,13 @@ class LoginViewModel @Inject constructor(
     suspend fun getSavedTokens(): Tokens? {
         return withContext(ioDispatcher) {
             getSavedTokensUseCase()
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch(ioDispatcher) {
+            logoutUseCase()
+            _loginState.value = LoginState.Idle
         }
     }
 }

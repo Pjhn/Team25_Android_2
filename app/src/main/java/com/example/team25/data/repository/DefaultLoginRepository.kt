@@ -69,4 +69,15 @@ class DefaultLoginRepository @Inject constructor(
     override suspend fun getSavedTokens(): Tokens? {
         return tokenDataStore.data.firstOrNull()
     }
+
+    override suspend fun logout() {
+        tokenDataStore.updateData { currentTokens ->
+            currentTokens.toBuilder()
+                .clearAccessToken()
+                .clearRefreshToken()
+                .clearAccessTokenExpiresIn()
+                .clearRefreshTokenExpiresIn()
+                .build()
+        }
+    }
 }
