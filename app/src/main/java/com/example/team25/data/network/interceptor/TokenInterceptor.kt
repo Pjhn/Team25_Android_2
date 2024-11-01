@@ -1,6 +1,5 @@
 package com.example.team25.data.network.interceptor
 
-import com.example.team25.data.database.TokenSerializer
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
