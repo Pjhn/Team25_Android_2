@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.team25.databinding.ActivityLoginEntryBinding
 import com.example.team25.ui.main.MainActivity
 import com.example.team25.ui.register.RegisterEntryActivity
+import com.example.team25.ui.register.RegisterStatusActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -26,9 +27,25 @@ class LoginEntryActivity : AppCompatActivity() {
         binding = ActivityLoginEntryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkAutoLogin()
         navigateToMain()
         setKakaoLoginBtnClickListener()
         observeLoginState()
+    }
+
+    private fun checkAutoLogin() {
+        lifecycleScope.launch {
+            val tokens = loginViewModel.getSavedTokens()
+            if (tokens != null && tokens.accessToken.isNotEmpty()) {
+                navigateToRegisterStatus()
+            }
+        }
+    }
+
+    private fun navigateToRegisterStatus() {
+        val intent = Intent(this, RegisterStatusActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun navigateToMain() {

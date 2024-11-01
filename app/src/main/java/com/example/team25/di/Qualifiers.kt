@@ -22,3 +22,7 @@ annotation class GeneralOkHttpClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class SignInRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class IoDispatcher
