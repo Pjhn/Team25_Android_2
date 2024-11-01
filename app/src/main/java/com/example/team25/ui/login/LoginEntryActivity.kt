@@ -58,6 +58,7 @@ class LoginEntryActivity : AppCompatActivity() {
     private fun navigateToRegisterEntry() {
         val intent = Intent(this, RegisterEntryActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     private fun setKakaoLoginBtnClickListener() {
