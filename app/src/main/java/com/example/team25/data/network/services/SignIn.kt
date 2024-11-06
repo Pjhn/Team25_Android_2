@@ -1,4 +1,4 @@
-package com.example.team25.data.remote
+package com.example.team25.data.network.services
 
 import com.example.team25.data.network.dto.AccountLoginDto
 import com.example.team25.data.network.dto.RefreshTokenDto

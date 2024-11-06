@@ -4,20 +4,16 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.team25.TokensProto.Tokens
-import com.example.team25.data.network.authenticator.HttpAuthenticator
 import com.example.team25.data.network.dto.TokenDto
 import com.example.team25.di.IoDispatcher
-import com.example.team25.domain.model.UserRole
+import com.example.team25.domain.model.UserStatus
 import com.example.team25.domain.usecase.GetSavedTokensUseCase
-import com.example.team25.domain.usecase.GetUserRoleUseCase
+import com.example.team25.domain.usecase.GetUserStatusUseCase
 import com.example.team25.domain.usecase.LoginUseCase
-import com.example.team25.domain.usecase.LogoutUseCase
-import com.example.team25.exceptions.TokenExpiredException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,8 +23,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val getSavedTokensUseCase: GetSavedTokensUseCase,
-    private val logoutUseCase: LogoutUseCase,
-    private val getUserRoleUseCase: GetUserRoleUseCase,
+    private val getUserStatusUseCase: GetUserStatusUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -64,17 +59,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun logout() {
-        viewModelScope.launch(ioDispatcher) {
-            logoutUseCase()
-            _loginState.value = LoginState.Idle
-        }
-    }
-
-    suspend fun getUserRole(): UserRole? {
+    suspend fun getUserStatus(): UserStatus? {
         return try {
-            val roleString = getUserRoleUseCase()
-            roleString?.let { UserRole.valueOf(it) }
+            val statusString = getUserStatusUseCase()
+            statusString?.let { UserStatus.valueOf(it) }
         } catch (e: Exception) {
             Log.d("testt", e.message.toString())
             null

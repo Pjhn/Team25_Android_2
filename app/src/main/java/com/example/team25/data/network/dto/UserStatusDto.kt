@@ -2,12 +2,12 @@ package com.example.team25.data.network.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class UserRoleDto(
+data class UserStatusDto(
     @SerializedName("status") val status: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val data: UserRole
+    @SerializedName("data") val data: UserStatus
 )
 
-data class UserRole(
-    @SerializedName("userRole") val userRole: String
+data class UserStatus(
+    @SerializedName("status") val userStatus: String
 )
