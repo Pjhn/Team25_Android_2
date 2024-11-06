@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
