@@ -2,27 +2,43 @@ package com.example.team25.ui.profile
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.team25.R
 import com.example.team25.data.network.dto.DaySchedule
-import com.example.team25.databinding.ActivityEditWorkTimeBinding
+import com.example.team25.databinding.FragmentEditWorkTimeBinding
 import com.example.team25.utils.DropdownUtils
+import dagger.hilt.android.AndroidEntryPoint
 
-class EditWorkTimeActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityEditWorkTimeBinding
+@AndroidEntryPoint
+class EditWorkTimeFragment : Fragment() {
+    private var _binding: FragmentEditWorkTimeBinding? = null
+    private val binding get() = _binding!!
+    private val managerInformationViewModel: ManagerInformationViewModel by activityViewModels()
     private lateinit var dayButtonLayoutPairs: Map<View, View>
     private lateinit var daySchedules: DaySchedule
     private lateinit var autoCompleteTextViews : MutableList<AutoCompleteTextView>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityEditWorkTimeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentEditWorkTimeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        super.onViewCreated(view, savedInstanceState)
         initializeAutoCompleteTextViews()
         initializeDayLayoutPairs()
 
@@ -73,7 +89,7 @@ class EditWorkTimeActivity : AppCompatActivity() {
         )
 
         autoCompleteTextViews.forEach { autoCompleteTextView ->
-            DropdownUtils.setupDropdown(this, autoCompleteTextView, R.array.time)
+            DropdownUtils.setupDropdown(requireContext(), autoCompleteTextView, R.array.time)
             autoCompleteTextView.setText("00:00")
         }
     }
@@ -91,11 +107,8 @@ class EditWorkTimeActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        binding.previousBtn.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
 
-        binding.editBtn.setOnClickListener {
+        binding.nextBtn.setOnClickListener {
             updateSchedules()
             Log.d("EditWorkTimeActivity", "Day Schedules: $daySchedules")
         }
@@ -103,7 +116,7 @@ class EditWorkTimeActivity : AppCompatActivity() {
     private fun setupDropdowns() {
 
         autoCompleteTextViews.forEach { autoCompleteTextView ->
-            DropdownUtils.setupDropdown(this, autoCompleteTextView, R.array.time)
+            DropdownUtils.setupDropdown(requireContext(), autoCompleteTextView, R.array.time)
         }
     }
 
@@ -147,8 +160,8 @@ class EditWorkTimeActivity : AppCompatActivity() {
         endTimeView.setText("00:00", false)
 
 
-        DropdownUtils.setupDropdown(this, startTimeView, R.array.time)
-        DropdownUtils.setupDropdown(this, endTimeView, R.array.time)
+        DropdownUtils.setupDropdown(requireContext(), startTimeView, R.array.time)
+        DropdownUtils.setupDropdown(requireContext(), endTimeView, R.array.time)
     }
     private fun resetDayTime(day: String?) {
         when (day) {

@@ -153,7 +153,7 @@
     <string name="select_active_time">활동 시간 선택 </string>
     <string name="_08_00">08:00</string>
     <string name="_20_00">20:00</string>
-    <string name="set_work_time_location">근무 지역/시간대 설정하기</string>
+    <string name="set_work_time">근무 시간대 설정하기</string>
     <string-array name="administrative_district_option">
         <item>서울특별시</item>
         <item>부산광역시</item>
@@ -318,5 +318,8 @@
     <string name="logout">로그아웃</string>
     <string name="loading">로딩 중입니다.</string>
     <string name="withdraw_membership">회원 탈퇴</string>
+    <string name="please_register_location">지역을 등록해주세요</string>
+    <string name="edit_complete">수정완료</string>
+    <string name="please_write_comment">한마디 자기소개를 적어주세요</string>
 
 </resources>

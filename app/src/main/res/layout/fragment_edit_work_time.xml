@@ -31,7 +31,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="30dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/move_layout"
+        app:layout_constraintBottom_toTopOf="@id/next_btn"
         app:layout_constraintTop_toBottomOf="@id/title_prefer_time_text_view">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -546,37 +546,16 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/move_layout"
+    <TextView
+        android:id="@+id/next_btn"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/previous_btn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/blue_outline_box"
-            android:gravity="center"
-            android:text="@string/previous"
-            android:textColor="@color/blue"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/edit_btn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/blue"
-            android:gravity="center"
-            android:text="@string/edit"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        android:background="@color/blue"
+        android:gravity="center"
+        android:text="@string/edit_complete"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -21,5 +21,5 @@ interface ManagerInformationRepository {
         schedule: DaySchedule
     ): Result<ManagerTimeResponse?>
 
-    suspend fun getProfile(): ProfileDto?
+    suspend fun getProfile(): Result<ProfileDto?>
 }
