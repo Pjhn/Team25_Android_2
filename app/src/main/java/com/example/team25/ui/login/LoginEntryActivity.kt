@@ -142,24 +142,24 @@ class LoginEntryActivity : AppCompatActivity() {
             }
         }
 
-//        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-//            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
-//                if (error != null) {
-//                    Log.e(TAG, "카카오톡으로 로그인 실패", error)
-//
-//                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-//                        return@loginWithKakaoTalk
-//                    }
-//
-//                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
-//                } else if (token != null) {
-//                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-//                    fetchUserInfo(token.accessToken)
-//                }
-//            }
-//        } else {
-        UserApiClient.instance.loginWithKakaoAccount(this@LoginEntryActivity, callback = callback)
-//        }
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+                if (error != null) {
+                    Log.e(TAG, "카카오톡으로 로그인 실패", error)
+
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+
+                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
+                } else if (token != null) {
+                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    fetchUserInfo(token.accessToken)
+                }
+            }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(this@LoginEntryActivity, callback = callback)
+        }
     }
 
     private fun fetchUserInfo(accessToken: String) {
