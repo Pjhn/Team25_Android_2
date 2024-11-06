@@ -8,7 +8,7 @@ import com.example.team25.data.network.interceptor.TokenInterceptor
 import com.example.team25.data.network.services.ManagerInformationService
 import com.example.team25.data.network.services.ManagerService
 import com.example.team25.data.network.services.UserService
-import com.example.team25.data.remote.SignIn
+import com.example.team25.data.network.services.SignIn
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +16,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
