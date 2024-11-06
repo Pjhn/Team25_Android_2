@@ -1,8 +1,10 @@
 package com.example.team25.di
 
+import com.example.team25.data.repository.DefaultManagerInformationRepository
 import com.example.team25.data.repository.DefaultManagerRepository
 import com.example.team25.data.repository.DefaultS3Repository
 import com.example.team25.data.repository.DefaultUserRepository
+import com.example.team25.domain.repository.ManagerInformationRepository
 import com.example.team25.domain.repository.ManagerRepository
 import com.example.team25.domain.repository.S3Repository
 import com.example.team25.domain.repository.UserRepository
@@ -27,5 +29,9 @@ abstract class ViewmodelModule {
     @Binds
     @ViewModelScoped
     abstract fun bindUserRepository(defaultUserRepository: DefaultUserRepository): UserRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindManagerInformationRepository(defaultManagerInformationRepository: DefaultManagerInformationRepository): ManagerInformationRepository
 }
 

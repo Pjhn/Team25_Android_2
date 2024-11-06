@@ -66,7 +66,7 @@ class LoginEntryActivity : AppCompatActivity() {
     private fun navigateBasedOnRoleAuto(role: UserRole?) {
         when (role) {
             UserRole.ROLE_MANAGER -> navigateToMain()
-            UserRole.ROLE_USER -> navigateToRegisterStatus()
+            UserRole.ROLE_USER -> navigateToRegisterEntry()
             else -> {
                 binding.kakaoLoginBtn.visibility = View.VISIBLE
             }
@@ -76,7 +76,7 @@ class LoginEntryActivity : AppCompatActivity() {
     private fun navigateBasedOnRoleDefault(role: UserRole?) {
         when (role) {
             UserRole.ROLE_MANAGER -> navigateToMain()
-            UserRole.ROLE_USER -> navigateToRegisterStatus()
+            UserRole.ROLE_USER -> navigateToRegisterEntry()
             else -> {
                 navigateToRegisterEntry()
             }
@@ -132,6 +132,7 @@ class LoginEntryActivity : AppCompatActivity() {
 
     private fun handleKakaoLogin() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            Log.e(TAG, "카카오 계정 로그인 콜백")
             if (error != null) {
                 Log.e(TAG, "카카오 계정으로 로그인 실패", error)
                 loginViewModel.updateErrorMessage("카카오 로그인 실패")
@@ -141,24 +142,24 @@ class LoginEntryActivity : AppCompatActivity() {
             }
         }
 
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
-                if (error != null) {
-                    Log.e(TAG, "카카오톡으로 로그인 실패", error)
-
-                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        return@loginWithKakaoTalk
-                    }
-
-                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
-                } else if (token != null) {
-                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
-                    fetchUserInfo(token.accessToken)
-                }
-            }
-        } else {
-            UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
-        }
+//        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+//            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+//                if (error != null) {
+//                    Log.e(TAG, "카카오톡으로 로그인 실패", error)
+//
+//                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+//                        return@loginWithKakaoTalk
+//                    }
+//
+//                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
+//                } else if (token != null) {
+//                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+//                    fetchUserInfo(token.accessToken)
+//                }
+//            }
+//        } else {
+        UserApiClient.instance.loginWithKakaoAccount(this@LoginEntryActivity, callback = callback)
+//        }
     }
 
     private fun fetchUserInfo(accessToken: String) {
