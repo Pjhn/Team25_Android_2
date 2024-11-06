@@ -27,7 +27,7 @@ android {
         buildConfigField("String", "S3_ACCESS_KEY", getApiKey("S3_ACCESS_KEY"))
         buildConfigField("String", "S3_SECRET_KEY", getApiKey("S3_SECRET_KEY"))
         buildConfigField("String", "API_BASE_URL", getApiUrl("API_BASE_URL"))
-        manifestPlaceholders["kakaoApiKey"] = getApiKey("KAKAO_API_KEY")
+        manifestPlaceholders["kakaoApiKey"] = getApiKey("KAKAO_API_KEY_NO_QUOTES")
     }
 
     buildTypes {

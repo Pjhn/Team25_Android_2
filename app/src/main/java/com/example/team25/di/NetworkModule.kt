@@ -5,6 +5,7 @@ import com.example.team25.BuildConfig
 import com.example.team25.TokensProto.Tokens
 import com.example.team25.data.network.authenticator.HttpAuthenticator
 import com.example.team25.data.network.interceptor.TokenInterceptor
+import com.example.team25.data.network.services.ManagerInformationService
 import com.example.team25.data.network.services.ManagerService
 import com.example.team25.data.network.services.UserService
 import com.example.team25.data.remote.SignIn
@@ -80,6 +81,13 @@ object NetworkModule {
     fun provideUserService(@GeneralRetrofit retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideManagerInformationService(@GeneralRetrofit retrofit: Retrofit): ManagerInformationService {
+        return retrofit.create(ManagerInformationService::class.java)
+    }
+
 
     @Provides
     @Singleton

@@ -35,7 +35,6 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
 
-
     fun login(oauthAccessToken: String) {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
