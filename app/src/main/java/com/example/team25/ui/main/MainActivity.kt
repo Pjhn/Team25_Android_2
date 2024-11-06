@@ -28,11 +28,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         observeWithdrawEvent()
+        observeName()
+        checkName()
         navigateToLiveCompanion()
         navigateToReservationStatus()
         setLogoutClickListener()
         setWithdrawClickListener()
     }
+
+    private fun checkName() {
+        mainViewModel.getName()
+    }
+
+    private fun observeName() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.name.collect { name ->
+                    binding.managerNameTextView.text = name
+                }
+            }
+        }
+    }
+
 
     private fun setLogoutClickListener() {
         binding.logoutTextView.setOnClickListener {

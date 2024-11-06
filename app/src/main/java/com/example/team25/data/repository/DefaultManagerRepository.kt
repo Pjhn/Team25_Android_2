@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.team25.data.network.dto.ManagerRegisterDto
 import com.example.team25.data.network.services.ManagerService
 import com.example.team25.domain.repository.ManagerRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class DefaultManagerRepository @Inject constructor(
@@ -30,6 +31,16 @@ class DefaultManagerRepository @Inject constructor(
         } catch (e: Exception) {
             Log.e("ManagerRepository", "Exception occurred: ${e.message}", e)
             Result.failure(e)
+        }
+    }
+
+    override suspend fun getName(): String? {
+        val response = managerService.getName()
+        return if (response.isSuccessful) {
+            Log.d("name", response.toString())
+            response.body()?.data?.name
+        } else {
+            null
         }
     }
 

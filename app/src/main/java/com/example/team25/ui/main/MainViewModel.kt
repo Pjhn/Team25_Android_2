@@ -3,6 +3,7 @@ package com.example.team25.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.team25.di.IoDispatcher
+import com.example.team25.domain.usecase.GetNameUseCase
 import com.example.team25.domain.usecase.LogoutUseCase
 import com.example.team25.domain.usecase.WithdrawUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +17,11 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val withdrawUseCase: WithdrawUseCase,
+    private val getNameUseCase: GetNameUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): ViewModel(){
+    private val _name = MutableStateFlow<String>("")
+    val name: StateFlow<String> = _name
 
     private val _withdrawEvent = MutableStateFlow<WithdrawStatus>(WithdrawStatus.Idle)
     val withdrawEvent: StateFlow<WithdrawStatus> = _withdrawEvent
@@ -39,4 +43,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getName() {
+        viewModelScope.launch {
+            val managerName = getNameUseCase()
+            if (managerName != null) {
+                _name.value = managerName
+            }
+        }
+    }
 }
