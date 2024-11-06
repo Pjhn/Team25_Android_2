@@ -4,4 +4,6 @@ import com.example.team25.data.network.dto.ManagerRegisterDto
 
 interface ManagerRepository {
     suspend fun registerManager(managerRegisterDto: ManagerRegisterDto): Result<String>
+
+    suspend fun getName(): String?
 }
