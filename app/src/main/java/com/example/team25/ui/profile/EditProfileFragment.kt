@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.team25.R
 import com.example.team25.databinding.FragmentEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,17 +37,152 @@ class EditProfileFragment : Fragment() {
         observeProfileLoadStatus()
         managerInformationViewModel.getProfile()
 
-        observeProfileImage()
+        observeInformation()
+        navigateToPrevious()
         navigateToEditWorkLocation()
         navigateToEditWorkTime()
         navigateToEditComment()
     }
 
+    private fun navigateToPrevious() {
+        binding.backBtn.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
+    private fun observeInformation() {
+        observeProfileImage()
+        observeName()
+        observeRegion()
+        observeComment()
+        observeCareer()
+        observeTime()
+    }
+
+    private fun observeTime() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    managerInformationViewModel.monStartTime.collect { time ->
+                        binding.mondayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.monEndTime.collect { time ->
+                        binding.mondayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.tueStartTime.collect { time ->
+                        binding.tuesdayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.tueEndTime.collect { time ->
+                        binding.tuesdayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.wedStartTime.collect { time ->
+                        binding.wednesdayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.wedEndTime.collect { time ->
+                        binding.wednesdayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.thuStartTime.collect { time ->
+                        binding.thursdayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.thuEndTime.collect { time ->
+                        binding.thursdayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.friStartTime.collect { time ->
+                        binding.fridayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.friEndTime.collect { time ->
+                        binding.fridayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.satStartTime.collect { time ->
+                        binding.saturdayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.satEndTime.collect { time ->
+                        binding.saturdayEndTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.sunStartTime.collect { time ->
+                        binding.sundayStartTimeTextView.text = time
+                    }
+                }
+                launch {
+                    managerInformationViewModel.sunEndTime.collect { time ->
+                        binding.sundayEndTimeTextView.text = time
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeCareer() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                managerInformationViewModel.career.collect { career ->
+                    binding.careerText.text = career
+                }
+            }
+        }
+    }
+
+    private fun observeComment() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                managerInformationViewModel.comment.collect { comment ->
+                    binding.introductionTextView.text = comment
+                }
+            }
+        }
+    }
+
+    private fun observeRegion() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                managerInformationViewModel.workingRegion.collect { region ->
+                    binding.locationTextView.text = region
+                }
+            }
+        }
+    }
+
+    private fun observeName() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                managerInformationViewModel.name.collect { name ->
+                    binding.nameTextView.text = name
+                }
+            }
+        }
+    }
+
     private fun observeProfileImage() {
         lifecycleScope.launch {
-            managerInformationViewModel.profileImageUri.collect { uri ->
-                uri?.let {
-                    binding.profileImgeView.setImageURI(it)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                managerInformationViewModel.profileImageUri.collect { uri ->
+                    uri?.let {
+                        binding.profileImgeView.setImageURI(it)
+                    }
                 }
             }
         }

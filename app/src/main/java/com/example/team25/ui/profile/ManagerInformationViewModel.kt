@@ -29,6 +29,7 @@ class ManagerInformationViewModel @Inject constructor(
         SUCCESS,
         FAILURE
     }
+    val defaultTime = "00:00"
 
     private val _profileLoadStatus = MutableStateFlow(ProfileLoadStatus.LOADING)
     val profileLoadStatus: StateFlow<ProfileLoadStatus> = _profileLoadStatus
@@ -106,30 +107,32 @@ class ManagerInformationViewModel @Inject constructor(
                 _profileLoadStatus.value = ProfileLoadStatus.FAILURE
             } else {
                 _profileLoadStatus.value = ProfileLoadStatus.SUCCESS
-                _name.value = profile.data?.name.toString()
-                _profileImage.value = profile.data?.profileImage.toString()
-                getProfileImage(_profileImage.value)
+                _name.value = profile.data?.name ?: "Unknown"
+                _profileImage.value = profile.data?.profileImage ?: ""
+                if (_profileImage.value != "") {
+                    getProfileImage(_profileImage.value)
+                }
                 _gender.value = if (profile.data?.gender == "여성") Gender.FEMALE else Gender.MALE
-                _career.value = profile.data?.career.toString()
-                _comment.value = profile.data?.comment.toString()
-                _workingRegion.value = profile.data?.workingRegion.toString()
+                _career.value = profile.data?.career ?: "경력 없음"
+                _comment.value = profile.data?.comment ?: "한 마디를 등록해주세요"
+                _workingRegion.value = profile.data?.workingRegion ?: "지역을 등록해주세요"
 
                 val workingHour = profile.data?.workingHour
                 if (workingHour != null) {
-                    _monStartTime.value = workingHour.monStartTime.toString()
-                    _monEndTime.value = workingHour.monEndTime.toString()
-                    _tueStartTime.value = workingHour.tueStartTime.toString()
-                    _tueEndTime.value = workingHour.tueEndTime.toString()
-                    _wedStartTime.value = workingHour.wedStartTime.toString()
-                    _wedEndTime.value = workingHour.wedEndTime.toString()
-                    _thuStartTime.value = workingHour.thuStartTime.toString()
-                    _thuEndTime.value = workingHour.thuEndTime.toString()
-                    _friStartTime.value = workingHour.friStartTime.toString()
-                    _friEndTime.value = workingHour.friEndTime.toString()
-                    _satStartTime.value = workingHour.satStartTime.toString()
-                    _satEndTime.value = workingHour.satEndTime.toString()
-                    _sunStartTime.value = workingHour.sunStartTime.toString()
-                    _sunEndTime.value = workingHour.sunEndTime.toString()
+                    _monStartTime.value = workingHour.monStartTime ?: defaultTime
+                    _monEndTime.value = workingHour.monEndTime ?: defaultTime
+                    _tueStartTime.value = workingHour.tueStartTime ?: defaultTime
+                    _tueEndTime.value = workingHour.tueEndTime ?: defaultTime
+                    _wedStartTime.value = workingHour.wedStartTime ?: defaultTime
+                    _wedEndTime.value = workingHour.wedEndTime ?: defaultTime
+                    _thuStartTime.value = workingHour.thuStartTime ?: defaultTime
+                    _thuEndTime.value = workingHour.thuEndTime ?: defaultTime
+                    _friStartTime.value = workingHour.friStartTime ?: defaultTime
+                    _friEndTime.value = workingHour.friEndTime ?: defaultTime
+                    _satStartTime.value = workingHour.satStartTime ?: defaultTime
+                    _satEndTime.value = workingHour.satEndTime ?: defaultTime
+                    _sunStartTime.value = workingHour.sunStartTime ?: defaultTime
+                    _sunEndTime.value = workingHour.sunEndTime ?: defaultTime
                 }
 
             }
@@ -153,7 +156,6 @@ class ManagerInformationViewModel @Inject constructor(
         _profileImage.value = ""
         _gender.value = Gender.MALE
 
-        val defaultTime = "00:00"
         _monStartTime.value = defaultTime
         _monEndTime.value = defaultTime
         _tueStartTime.value = defaultTime

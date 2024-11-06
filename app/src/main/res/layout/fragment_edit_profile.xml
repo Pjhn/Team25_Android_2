@@ -140,7 +140,7 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
-                android:id="@+id/active_location_child"
+                android:id="@+id/location_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="35sp"
                 android:layout_marginTop="10dp"
@@ -157,8 +157,8 @@
                 android:textSize="18sp"
 
 
-                app:layout_constraintStart_toStartOf="@id/active_location_child"
-                app:layout_constraintTop_toBottomOf="@id/active_location_child" />
+                app:layout_constraintStart_toStartOf="@id/location_text_view"
+                app:layout_constraintTop_toBottomOf="@id/location_text_view" />
 
             <LinearLayout
                 android:id="@+id/monday_layout"
@@ -170,6 +170,7 @@
                 app:layout_constraintTop_toBottomOf="@id/active_time_parent">
 
                 <TextView
+                    android:id="@+id/monday_text_view"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/day_of_week"
@@ -178,10 +179,26 @@
                     android:textColor="@color/blue" />
 
                 <TextView
+                    android:id="@+id/monday_start_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="@string/_00_00_00_00"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/monday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -196,7 +213,7 @@
                 app:layout_constraintTop_toBottomOf="@id/monday_layout">
 
                 <TextView
-                    android:id="@+id/monday"
+                    android:id="@+id/tuesday_text_view"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/day_of_week"
@@ -205,11 +222,26 @@
                     android:textColor="@color/blue" />
 
                 <TextView
-                    android:id="@+id/monday_time"
+                    android:id="@+id/tuesday_start_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="@string/_00_00_00_00"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tuesday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -224,7 +256,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tuesday_layout">
 
                 <TextView
-                    android:id="@+id/wednesday"
+                    android:id="@+id/wednesday_text_view"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/day_of_week"
@@ -233,11 +265,26 @@
                     android:textColor="@color/blue" />
 
                 <TextView
-                    android:id="@+id/wednesday_time"
+                    android:id="@+id/wednesday_start_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="@string/_00_00_00_00"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/wednesday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -252,7 +299,7 @@
                 app:layout_constraintTop_toBottomOf="@id/wednesday_layout">
 
                 <TextView
-                    android:id="@+id/thursday"
+                    android:id="@+id/thursday_text_view"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/day_of_week"
@@ -261,11 +308,26 @@
                     android:textColor="@color/blue" />
 
                 <TextView
-                    android:id="@+id/thursday_time"
+                    android:id="@+id/thursday_start_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="@string/_00_00_00_00"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/thursday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -280,7 +342,7 @@
                 app:layout_constraintTop_toBottomOf="@id/thursday_layout">
 
                 <TextView
-                    android:id="@+id/friday"
+                    android:id="@+id/friday_text_view"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/day_of_week"
@@ -289,11 +351,110 @@
                     android:textColor="@color/blue" />
 
                 <TextView
-                    android:id="@+id/friday_time"
+                    android:id="@+id/friday_start_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:text="@string/_00_00_00_00"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/friday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/saturday_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@id/friday_layout"
+                app:layout_constraintTop_toBottomOf="@id/friday_layout">
+
+                <TextView
+                    android:id="@+id/saturday_text_view"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/day_of_week"
+                    android:gravity="center"
+                    android:text="@string/saturday"
+                    android:textColor="@color/blue" />
+
+                <TextView
+                    android:id="@+id/saturday_start_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/saturday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sunday_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@id/saturday_layout"
+                app:layout_constraintTop_toBottomOf="@id/saturday_layout">
+
+                <TextView
+                    android:id="@+id/sunday_text_view"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/day_of_week"
+                    android:gravity="center"
+                    android:text="@string/sunday"
+                    android:textColor="@color/blue" />
+
+                <TextView
+                    android:id="@+id/sunday_start_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:text="@string/_00_00"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tilde"
+                    android:layout_marginStart="10dp"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/sunday_end_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/_00_00"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -310,7 +471,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/friday_layout" />
+                app:layout_constraintTop_toBottomOf="@id/sunday_layout" />
 
             <TextView
                 android:id="@+id/title_introduction_text_view"
@@ -319,7 +480,7 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/short_introduction"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@id/active_location_child"
+                app:layout_constraintStart_toStartOf="@id/location_text_view"
                 app:layout_constraintTop_toBottomOf="@id/edit_work_time_btn" />
 
             <TextView
@@ -344,7 +505,7 @@
                 android:padding="10dp"
                 android:text="@string/introduction_text"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/active_location_child"
+                app:layout_constraintStart_toStartOf="@id/location_text_view"
                 app:layout_constraintTop_toBottomOf="@id/title_introduction_text_view" />
 
             <TextView
