@@ -32,5 +32,5 @@ interface ManagerInformationService {
     ): Response<ManagerTimeResponse>
 
     @GET("/api/manager/me/profile")
-    suspend fun getProfile(): ProfileDto?
+    suspend fun getProfile(): Response<ProfileDto?>
 }

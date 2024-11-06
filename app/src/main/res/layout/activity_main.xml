@@ -72,6 +72,7 @@
                 android:id="@+id/profile_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:src="@drawable/profile_base"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -202,14 +203,14 @@
 
     <TextView
         android:id="@+id/withdraw_text_view"
-        android:layout_marginBottom="20dp"
         android:layout_width="wrap_content"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@color/red"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:text="@string/withdraw_membership"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/logout_text_view"/>
+        app:layout_constraintEnd_toEndOf="@id/logout_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

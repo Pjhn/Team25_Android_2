@@ -1,5 +1,6 @@
 package com.example.team25.data.repository
 
+import android.util.Log
 import com.example.team25.data.network.dto.DaySchedule
 import com.example.team25.data.network.dto.ManagerCommentRequest
 import com.example.team25.data.network.dto.ManagerCommentResponse
@@ -21,13 +22,13 @@ class DefaultManagerInformationRepository @Inject constructor(
             val response = managerInformationService.changeComment(commentRequest)
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                if (responseBody != null && responseBody.status!!) {
+                if (responseBody != null && responseBody.status == true) {
                     Result.success(responseBody)
                 } else {
                     Result.failure(Exception("Invalid response"))
                 }
             } else {
-                Result.failure(Exception("Registration failed"))
+                Result.failure(Exception("Change Comment failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -42,21 +43,36 @@ class DefaultManagerInformationRepository @Inject constructor(
             val response = managerInformationService.changeLocation(locationRequest)
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                if (responseBody != null && responseBody.status!!) {
+                if (responseBody != null && responseBody.status == true) {
                     Result.success(responseBody)
                 } else {
                     Result.failure(Exception("Invalid response"))
                 }
             } else {
-                Result.failure(Exception("Registration failed"))
+                Result.failure(Exception("Change Manager failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun getProfile(): ProfileDto? {
-        return managerInformationService.getProfile()
+    override suspend fun getProfile(): Result<ProfileDto?> {
+        return try {
+            val response = managerInformationService.getProfile()
+            Log.d("profile", response.body().toString())
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null && responseBody.status == true) {
+                    Result.success(responseBody)
+                } else {
+                    Result.failure(Exception("Invalid response"))
+                }
+            } else {
+                Result.failure(Exception("Get profile failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override suspend fun updateManagerSchedule(schedule: DaySchedule): Result<ManagerTimeResponse?> {
@@ -64,13 +80,13 @@ class DefaultManagerInformationRepository @Inject constructor(
             val response = managerInformationService.updateManagerSchedule(schedule)
             if (response.isSuccessful) {
                 val responseBody = response.body()
-                if (responseBody != null && responseBody.status!!) {
+                if (responseBody != null && responseBody.status == true) {
                     Result.success(responseBody)
                 } else {
                     Result.failure(Exception("Invalid response"))
                 }
             } else {
-                Result.failure(Exception("Registration failed"))
+                Result.failure(Exception("change Schedule failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)

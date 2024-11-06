@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.team25.databinding.ActivityMainBinding
 import com.example.team25.ui.companion.LiveCompanionActivity
 import com.example.team25.ui.login.LoginEntryActivity
+import com.example.team25.ui.profile.ProfileActivity
 import com.example.team25.ui.status.ReservationStatusActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -30,10 +31,18 @@ class MainActivity : AppCompatActivity() {
         observeWithdrawEvent()
         observeName()
         checkName()
+        navigateToProfile()
         navigateToLiveCompanion()
         navigateToReservationStatus()
         setLogoutClickListener()
         setWithdrawClickListener()
+    }
+
+    private fun navigateToProfile() {
+        binding.profileImageView.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun checkName() {

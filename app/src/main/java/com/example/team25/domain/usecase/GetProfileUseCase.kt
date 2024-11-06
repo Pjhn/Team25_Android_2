@@ -9,7 +9,8 @@ class GetProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): ProfileDto? {
         return try {
-            managerInformationRepository.getProfile()
+            val result = managerInformationRepository.getProfile()
+            result.getOrNull()
         } catch (e: Exception) {
             null
         }

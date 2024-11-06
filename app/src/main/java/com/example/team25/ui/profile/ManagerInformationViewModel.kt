@@ -92,36 +92,37 @@ class ManagerInformationViewModel @Inject constructor(
 
     fun getProfile() {
         viewModelScope.launch {
+            resetProfileData()
             val profile: ProfileDto? = getProfileUseCase()
-
             if (profile == null) {
                 Log.e(TAG, "Profile data is null or failed to load")
                 _profileLoadStatus.value = ProfileLoadStatus.FAILURE
-                resetProfileData()
             } else {
                 _profileLoadStatus.value = ProfileLoadStatus.SUCCESS
-                _name.value = profile.data.name
-                _profileImage.value = profile.data.profileImage
-                _gender.value = if (profile.data.gender == "여성") Gender.FEMALE else Gender.MALE
-                _career.value = profile.data.career
-                _comment.value = profile.data.comment
-                _workingRegion.value = profile.data.workingRegion
+                _name.value = profile.data?.name.toString()
+                _profileImage.value = profile.data?.profileImage.toString()
+                _gender.value = if (profile.data?.gender == "여성") Gender.FEMALE else Gender.MALE
+                _career.value = profile.data?.career.toString()
+                _comment.value = profile.data?.comment.toString()
+                _workingRegion.value = profile.data?.workingRegion.toString()
 
-                val workingHour = profile.data.workingHour
-                _monStartTime.value = workingHour.monStartTime
-                _monEndTime.value = workingHour.monEndTime
-                _tueStartTime.value = workingHour.tueStartTime
-                _tueEndTime.value = workingHour.tueEndTime
-                _wedStartTime.value = workingHour.wedStartTime
-                _wedEndTime.value = workingHour.wedEndTime
-                _thuStartTime.value = workingHour.thuStartTime
-                _thuEndTime.value = workingHour.thuEndTime
-                _friStartTime.value = workingHour.friStartTime
-                _friEndTime.value = workingHour.friEndTime
-                _satStartTime.value = workingHour.satStartTime
-                _satEndTime.value = workingHour.satEndTime
-                _sunStartTime.value = workingHour.sunStartTime
-                _sunEndTime.value = workingHour.sunEndTime
+                val workingHour = profile.data?.workingHour
+                if (workingHour != null) {
+                    _monStartTime.value = workingHour.monStartTime.toString()
+                    _monEndTime.value = workingHour.monEndTime.toString()
+                    _tueStartTime.value = workingHour.tueStartTime.toString()
+                    _tueEndTime.value = workingHour.tueEndTime.toString()
+                    _wedStartTime.value = workingHour.wedStartTime.toString()
+                    _wedEndTime.value = workingHour.wedEndTime.toString()
+                    _thuStartTime.value = workingHour.thuStartTime.toString()
+                    _thuEndTime.value = workingHour.thuEndTime.toString()
+                    _friStartTime.value = workingHour.friStartTime.toString()
+                    _friEndTime.value = workingHour.friEndTime.toString()
+                    _satStartTime.value = workingHour.satStartTime.toString()
+                    _satEndTime.value = workingHour.satEndTime.toString()
+                    _sunStartTime.value = workingHour.sunStartTime.toString()
+                    _sunEndTime.value = workingHour.sunEndTime.toString()
+                }
 
             }
         }
