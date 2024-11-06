@@ -1,10 +1,12 @@
 package com.example.team25.ui.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.team25.data.network.dto.ProfileDto
 import com.example.team25.domain.model.Gender
+import com.example.team25.domain.usecase.GetImageUriUseCase
 import com.example.team25.domain.usecase.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ManagerInformationViewModel @Inject constructor(
-    private val getProfileUseCase: GetProfileUseCase
+    private val getProfileUseCase: GetProfileUseCase,
+    private val getImageUriUseCase: GetImageUriUseCase
 ) : ViewModel() {
 
     companion object {
@@ -38,6 +41,10 @@ class ManagerInformationViewModel @Inject constructor(
 
     private val _profileImage = MutableStateFlow("")
     val profileImage: StateFlow<String> = _profileImage
+
+    private val _profileImageUri = MutableStateFlow<Uri?>(null)
+    val profileImageUri: StateFlow<Uri?> = _profileImageUri
+
 
     private val _gender = MutableStateFlow(Gender.MALE)
     val gender: StateFlow<Gender> = _gender
@@ -101,6 +108,7 @@ class ManagerInformationViewModel @Inject constructor(
                 _profileLoadStatus.value = ProfileLoadStatus.SUCCESS
                 _name.value = profile.data?.name.toString()
                 _profileImage.value = profile.data?.profileImage.toString()
+                getProfileImage(_profileImage.value)
                 _gender.value = if (profile.data?.gender == "여성") Gender.FEMALE else Gender.MALE
                 _career.value = profile.data?.career.toString()
                 _comment.value = profile.data?.comment.toString()
@@ -124,6 +132,15 @@ class ManagerInformationViewModel @Inject constructor(
                     _sunEndTime.value = workingHour.sunEndTime.toString()
                 }
 
+            }
+        }
+    }
+
+    private fun getProfileImage(s3url: String) {
+        viewModelScope.launch {
+            val downloadedImageUri = getImageUriUseCase(s3url)
+            if (downloadedImageUri != null) {
+                _profileImageUri.value = downloadedImageUri
             }
         }
     }

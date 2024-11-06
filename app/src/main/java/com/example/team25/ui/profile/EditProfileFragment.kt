@@ -35,11 +35,21 @@ class EditProfileFragment : Fragment() {
         observeProfileLoadStatus()
         managerInformationViewModel.getProfile()
 
+        observeProfileImage()
         navigateToEditWorkLocation()
         navigateToEditWorkTime()
         navigateToEditComment()
     }
 
+    private fun observeProfileImage() {
+        lifecycleScope.launch {
+            managerInformationViewModel.profileImageUri.collect { uri ->
+                uri?.let {
+                    binding.profileImgeView.setImageURI(it)
+                }
+            }
+        }
+    }
 
     private fun observeProfileLoadStatus() {
         lifecycleScope.launch {
