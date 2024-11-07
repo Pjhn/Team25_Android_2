@@ -4,10 +4,14 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.team25.data.network.dto.PatchImageDto
 import com.example.team25.data.network.dto.ProfileDto
 import com.example.team25.domain.model.Gender
+import com.example.team25.domain.model.ImageFolder
 import com.example.team25.domain.usecase.GetImageUriUseCase
 import com.example.team25.domain.usecase.GetProfileUseCase
+import com.example.team25.domain.usecase.PatchImageUseCase
+import com.example.team25.domain.usecase.S3UploadUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ManagerInformationViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
-    private val getImageUriUseCase: GetImageUriUseCase
+    private val getImageUriUseCase: GetImageUriUseCase,
+    private val s3UploadUseCase: S3UploadUseCase,
+    private val patchImageUseCase: PatchImageUseCase
 ) : ViewModel() {
 
     companion object {
@@ -29,10 +35,14 @@ class ManagerInformationViewModel @Inject constructor(
         SUCCESS,
         FAILURE
     }
+
     val defaultTime = "00:00"
 
     private val _profileLoadStatus = MutableStateFlow(ProfileLoadStatus.LOADING)
     val profileLoadStatus: StateFlow<ProfileLoadStatus> = _profileLoadStatus
+
+    private val _imagePatched = MutableStateFlow(PatchStatus.DEFAULT)
+    val imagePatched: StateFlow<PatchStatus> = _imagePatched
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -43,9 +53,17 @@ class ManagerInformationViewModel @Inject constructor(
     private val _profileImage = MutableStateFlow("")
     val profileImage: StateFlow<String> = _profileImage
 
+    private val _newProfileImage = MutableStateFlow("")
+    val newProfileImage: StateFlow<String> = _newProfileImage
+
+    private val _newProfileImageUrl = MutableStateFlow("")
+    val newProfileImageUrl: StateFlow<String> = _newProfileImageUrl
+
     private val _profileImageUri = MutableStateFlow<Uri?>(null)
     val profileImageUri: StateFlow<Uri?> = _profileImageUri
 
+    private val _profileImageUrl = MutableStateFlow("")
+    val profileImageUrl: StateFlow<String> = _profileImageUrl
 
     private val _gender = MutableStateFlow(Gender.MALE)
     val gender: StateFlow<Gender> = _gender
@@ -170,5 +188,46 @@ class ManagerInformationViewModel @Inject constructor(
         _satEndTime.value = defaultTime
         _sunStartTime.value = defaultTime
         _sunEndTime.value = defaultTime
+    }
+
+    fun uploadImage() {
+        viewModelScope.launch {
+            try {
+                _newProfileImageUrl.value =
+                    s3UploadUseCase(_name.value, Uri.parse(_newProfileImage.value), ImageFolder.PROFILE.path)
+
+                patchImage()
+            } catch (e: Exception) {
+                Log.e(TAG, "s3 upload error")
+                _imagePatched.value = PatchStatus.FAILURE
+            }
+        }
+    }
+
+    private fun patchImage() {
+        val patchImageDto = PatchImageDto(
+            newProfileImage = _newProfileImageUrl.value
+        )
+
+        viewModelScope.launch {
+            val result = patchImageUseCase(patchImageDto)
+            _imagePatched.value = if (result.isSuccess) {
+                PatchStatus.SUCCESS
+            } else {
+                PatchStatus.FAILURE
+            }
+        }
+    }
+
+    fun updateProfileImage(newImage: String) {
+        _newProfileImage.value = newImage
+    }
+
+    fun isNewProfileImageEmpty(): Boolean {
+        return _newProfileImage.value.isEmpty()
+    }
+
+    fun updatePatchStatus(status: PatchStatus) {
+        _imagePatched.value = status
     }
 }

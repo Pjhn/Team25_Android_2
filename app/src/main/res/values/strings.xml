@@ -322,5 +322,7 @@
     <string name="edit_complete">수정완료</string>
     <string name="please_write_comment">한마디 자기소개를 적어주세요</string>
     <string name="tilde">~</string>
+    <string name="change_profile_image">프로필 이미지 변경</string>
+    <string name="do_change">변경하기</string>
 
 </resources>

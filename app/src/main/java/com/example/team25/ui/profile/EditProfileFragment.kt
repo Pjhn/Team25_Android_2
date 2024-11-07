@@ -42,6 +42,16 @@ class EditProfileFragment : Fragment() {
         navigateToEditWorkLocation()
         navigateToEditWorkTime()
         navigateToEditComment()
+        navigateToEditProfileImage()
+    }
+
+    private fun navigateToEditProfileImage() {
+        binding.profileEditBtn.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_view, EditImageFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun navigateToPrevious() {
