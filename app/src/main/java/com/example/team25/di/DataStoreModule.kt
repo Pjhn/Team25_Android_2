@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
 
-    private const val DATA_STORE_FILE_NAME = "location_service_state"
+    private const val DATA_STORE_FILE_NAME = "location_service"
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {

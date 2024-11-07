@@ -11,12 +11,14 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.team25.R
 import com.example.team25.ui.status.ReservationStatusActivity
+import com.example.team25.ui.status.utils.LocationManager
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class LocationUpdateService : Service() {
-    private val locationUpdateLauncher: LocationUpdateLauncher by lazy {
-        LocationUpdateLauncher(this)
-    }
-
+@AndroidEntryPoint
+class LocationUpdateService @Inject constructor(
+    private val locationUpdateLauncher: LocationUpdateLauncher
+) : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, createNotification())
         startLocationUpdate()
