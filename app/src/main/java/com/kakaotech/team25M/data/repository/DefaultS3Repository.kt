@@ -52,9 +52,7 @@ class DefaultS3Repository @Inject constructor(
                 observer.setTransferListener(object : TransferListener {
                     override fun onStateChanged(id: Int, state: TransferState?) {
                         if (state == TransferState.COMPLETED) {
-                            val uploadedUrl =
-                                "https://manager-app-storage.s3.ap-northeast-2.amazonaws.com/$s3FilePath"
-                            continuation.resume(uploadedUrl)
+                            continuation.resume(s3FilePath)
                         }
                     }
 
