@@ -43,27 +43,6 @@ class DefaultManagerRepository @Inject constructor(
         }
     }
 
-    override suspend fun patchImage(patchImageDto: PatchImageDto): Result<String?> {
-        return try {
-            val response = managerService.patchImage(patchImageDto)
-            if (response.isSuccessful) {
-                val responseBody = response.body()
-                if (responseBody != null && responseBody.status == true) {
-                    Result.success(responseBody.message)
-                } else {
-                    Log.e(TAG, "Invalid response body or status is false")
-                    Result.failure(Exception("Invalid response"))
-                }
-            } else {
-                Log.e(TAG, "Image Patch failed with status code: ${response.code()}")
-                Result.failure(Exception("Image Patch failed"))
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception occurred: ${e.message}", e)
-            Result.failure(e)
-        }
-    }
-
     companion object {
         private const val TAG = "ManagerRepository"
     }

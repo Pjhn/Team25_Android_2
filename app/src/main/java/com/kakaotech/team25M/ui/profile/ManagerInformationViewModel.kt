@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakaotech.team25M.data.network.dto.PatchImageDto
+import com.kakaotech.team25M.data.network.dto.PatchLocationDto
 import com.kakaotech.team25M.data.network.dto.ProfileDto
 import com.kakaotech.team25M.domain.model.Gender
 import com.kakaotech.team25M.domain.model.ImageFolder
 import com.kakaotech.team25M.domain.usecase.GetImageUriUseCase
 import com.kakaotech.team25M.domain.usecase.GetProfileUseCase
 import com.kakaotech.team25M.domain.usecase.PatchImageUseCase
+import com.kakaotech.team25M.domain.usecase.PatchLocationUseCase
 import com.kakaotech.team25M.domain.usecase.S3UploadUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,8 @@ class ManagerInformationViewModel @Inject constructor(
     private val getProfileUseCase: GetProfileUseCase,
     private val getImageUriUseCase: GetImageUriUseCase,
     private val s3UploadUseCase: S3UploadUseCase,
-    private val patchImageUseCase: PatchImageUseCase
+    private val patchImageUseCase: PatchImageUseCase,
+    private val patchLocationUseCase: PatchLocationUseCase,
 ) : ViewModel() {
 
     companion object {
@@ -36,13 +39,16 @@ class ManagerInformationViewModel @Inject constructor(
         FAILURE
     }
 
-    val defaultTime = "00:00"
+    private val defaultTime = "00:00"
 
     private val _profileLoadStatus = MutableStateFlow(ProfileLoadStatus.LOADING)
     val profileLoadStatus: StateFlow<ProfileLoadStatus> = _profileLoadStatus
 
     private val _imagePatched = MutableStateFlow(PatchStatus.DEFAULT)
     val imagePatched: StateFlow<PatchStatus> = _imagePatched
+
+    private val _locationPatched = MutableStateFlow(PatchStatus.DEFAULT)
+    val locationPatched: StateFlow<PatchStatus> = _locationPatched
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -166,9 +172,17 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun getRegion(): String? {
+        return if (_workingRegion.value != "" && _workingRegion.value != "지역을 등록해주세요") {
+            _workingRegion.value
+        } else {
+            null
+        }
+    }
+
     private fun resetProfileData() {
         _name.value = "Unknown"
-        _workingRegion.value = ""
+        _workingRegion.value = "지역을 등록해주세요"
         _career.value = "No career info"
         _comment.value = "No comment available"
         _profileImage.value = ""
@@ -219,6 +233,21 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun patchLocation(sido: String, sigungu: String) {
+        val patchLocationDto = PatchLocationDto(
+            newWorkingRegion = "$sido $sigungu"
+        )
+
+        viewModelScope.launch {
+            val result = patchLocationUseCase(patchLocationDto)
+            _locationPatched.value = if (result.isSuccess) {
+                PatchStatus.SUCCESS
+            } else {
+                PatchStatus.FAILURE
+            }
+        }
+    }
+
     fun updateProfileImage(newImage: String) {
         _newProfileImage.value = newImage
     }
@@ -227,7 +256,12 @@ class ManagerInformationViewModel @Inject constructor(
         return _newProfileImage.value.isEmpty()
     }
 
-    fun updatePatchStatus(status: PatchStatus) {
+    fun updateImagePatchStatus(status: PatchStatus) {
         _imagePatched.value = status
     }
+
+    fun updateLocationPatchStatus(status: PatchStatus) {
+        _locationPatched.value = status
+    }
+
 }

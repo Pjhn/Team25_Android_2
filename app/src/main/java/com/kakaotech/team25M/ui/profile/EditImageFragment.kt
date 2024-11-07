@@ -48,11 +48,11 @@ class EditImageFragment : Fragment() {
                 managerInformationViewModel.imagePatched.collect { isPatched ->
                     when (isPatched) {
                         PatchStatus.SUCCESS -> {
-                            managerInformationViewModel.updatePatchStatus(PatchStatus.DEFAULT)
+                            managerInformationViewModel.updateImagePatchStatus(PatchStatus.DEFAULT)
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
                         PatchStatus.FAILURE -> {
-                            managerInformationViewModel.updatePatchStatus(PatchStatus.DEFAULT)
+                            managerInformationViewModel.updateImagePatchStatus(PatchStatus.DEFAULT)
                             Toast.makeText(requireContext(), "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
                         }
                         PatchStatus.DEFAULT -> {}
@@ -92,6 +92,11 @@ class EditImageFragment : Fragment() {
         binding.profileUploadBtn.setOnClickListener {
             getImageLauncher.launch("image/*")
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

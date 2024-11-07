@@ -97,6 +97,26 @@
         <item>064</item>
     </string-array>
 
+    <string-array name="sido_option">
+        <item>서울</item>
+        <item>부산</item>
+        <item>인천</item>
+        <item>대구</item>
+        <item>대전</item>
+        <item>광주</item>
+        <item>울산</item>
+        <item>세종특별자치시</item>
+        <item>경기</item>
+        <item>충남</item>
+        <item>충북</item>
+        <item>전남</item>
+        <item>경북</item>
+        <item>경남</item>
+        <item>강원특별자치도</item>
+        <item>전북특별자치도</item>
+        <item>제주특별자치도</item>
+    </string-array>
+
     <string name="reservation_history">예약 내역</string>
     <string name="reservation_cancel">예약 취소</string>
     <string name="call_manager">매니저에게 연락하기</string>
@@ -324,5 +344,6 @@
     <string name="tilde">~</string>
     <string name="change_profile_image">프로필 이미지 변경</string>
     <string name="do_change">변경하기</string>
+    <string name="input_sigungu">시/군/구를 입력하세요</string>
 
 </resources>

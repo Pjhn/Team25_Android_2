@@ -191,7 +191,8 @@ class EditProfileFragment : Fragment() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 managerInformationViewModel.profileImageUri.collect { uri ->
                     uri?.let {
-                        binding.profileImgeView.setImageURI(it)
+                        binding.profileImageView.background = null
+                        binding.profileImageView.setImageURI(it)
                     }
                 }
             }
@@ -242,6 +243,11 @@ class EditProfileFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
