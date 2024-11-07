@@ -2,148 +2,83 @@ package com.example.team25.ui.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.team25.domain.model.AccompanyInfo
-import com.example.team25.domain.model.Gender
-import com.example.team25.domain.model.Patient
-import com.example.team25.domain.model.ReservationInfo
-import com.example.team25.ui.status.utils.LocationStateManager
+import com.example.team25.data.network.dto.CoordinatesDto
+import com.example.team25.domain.model.ReservationStatus
+import com.example.team25.domain.model.ReservationStatus.*
+import com.example.team25.domain.repository.CoordinatesRepository
+import com.example.team25.domain.repository.ReservationRepository
+import com.example.team25.ui.status.utils.LocationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class ReservationStatusViewModel @Inject constructor(private val manager: LocationStateManager) :
-    ViewModel() {
+class ReservationStatusViewModel @Inject constructor(
+    private val locationManager: LocationManager,
+    private val reservationRepository: ReservationRepository,
+    private val coordinatesRepository: CoordinatesRepository
+) : ViewModel() {
+    val latitudeFlow = locationManager.latitudeFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0.0)
+    val longitudeFlow = locationManager.longitudeFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0.0)
 
-    val isServiceRunning =
-        manager.runningServiceFlow.stateIn(viewModelScope, SharingStarted.Lazily, null)
+    private val _runningReservationId = MutableStateFlow<String>("")
+    val runningReservationId: StateFlow<String> = _runningReservationId
 
-    val runningAccompanyId =
-        manager.accompanyIdFlow.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val confirmedOrRunningReservations = reservationRepository.getReservationsFlow()
+        .map { reservations -> reservations.filter { it.reservationStatus == 확정 || it.reservationStatus == 진행중 } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = emptyList()
+        )
 
-    private var _reservationStatus = MutableStateFlow<List<AccompanyInfo>>(emptyList())
-    val reservationStatus: StateFlow<List<AccompanyInfo>> get() = _reservationStatus
+    val pendingReservations = reservationRepository.getReservationsFlow()
+        .map { reservations -> reservations.filter { it.reservationStatus == 보류 } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = emptyList()
+        )
 
-    private var _reservationApply = MutableStateFlow<List<ReservationInfo>>(emptyList())
-    val reservationApply: StateFlow<List<ReservationInfo>> get() = _reservationApply
+    val completedReservations = reservationRepository.getReservationsFlow()
+        .map { reservations -> reservations.filter { it.reservationStatus == 완료 } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = emptyList()
+        )
 
-    private var _companionHistory = MutableStateFlow<List<ReservationInfo>>(emptyList())
-    val companionHistory: StateFlow<List<ReservationInfo>> get() = _companionHistory
-
-    /**
-     * 뷰모델 테스트 데이터 입니다
-     */
     init {
-        val mockAccompany = listOf(
-            AccompanyInfo(
-                isRunningService = false,
-                accompanyId = 2700,
-                reservationInfo = ReservationInfo(
-                    departure = "부산 남구",
-                    destination = "부산대학교 병원",
-                    serviceDate = Date(),
-                    transportation = "택시",
-                    patient = Patient(
-                        patientName = "이상민",
-                        patientGender = Gender.MALE,
-                        patientPhone = "01012345678",
-                        patientBirth = "640630"
-                    )
-                )
-            ),
-            AccompanyInfo(
-                isRunningService = false,
-                accompanyId = 3000,
-                reservationInfo = ReservationInfo(
-                    departure = "부산 서면",
-                    destination = "부산대학교 병원",
-                    serviceDate = Date(),
-                    transportation = "자차",
-                    patient = Patient(
-                        patientName = "김철수",
-                        patientGender = Gender.FEMALE,
-                        patientPhone = "01087654321",
-                        patientBirth = "720630"
-                    )
-                )
-            )
-        )
-
-        val mockReservation = listOf(
-            ReservationInfo(
-                departure = "부산 진구",
-                destination = "부산대학교 병원",
-                serviceDate = Date(),
-                transportation = "택시",
-                patient = Patient(
-                    patientName = "박상욱",
-                    patientGender = Gender.MALE,
-                    patientPhone = "01012345678",
-                    patientBirth = "620630"
-                )
-            ),
-            ReservationInfo(
-                departure = "부산 서구",
-                destination = "부산대학교 병원",
-                serviceDate = Date(),
-                transportation = "자차",
-                patient = Patient(
-                    patientName = "육미옥",
-                    patientGender = Gender.FEMALE,
-                    patientPhone = "01012345678",
-                    patientBirth = "620630"
-                )
-            )
-        )
-
-        updateReservationStatus(mockAccompany)
-        updateReservationApply(mockReservation)
-        updateCompanionHistory(mockReservation)
+        postCoordinates()
     }
 
-    fun updateAccompanyInfo(accompany: AccompanyInfo, isServiceRunning: Boolean){
+    fun changeReservation(reservationId: String, status: ReservationStatus) {
         viewModelScope.launch {
-            manager.storeId(accompany.accompanyId,isServiceRunning)
+            reservationRepository.changeReservation(reservationId, status)
         }
     }
 
-    fun updateReservationStatus(accompanies: List<AccompanyInfo>) {
-        _reservationStatus.value = accompanies
-    }
-
-    fun updateReservationStatus(accompanyId: Long?, isRunning: Boolean) {
-        val updatedStatus = _reservationStatus.value.map {
-            if (it.accompanyId == accompanyId) it.copy(isRunningService = isRunning) else it
+    fun updateRunningReservationId(id: String) {
+        viewModelScope.launch {
+            _runningReservationId.value = id
         }
-        _reservationStatus.value = updatedStatus
     }
 
-    fun updateReservationApply(reservations: List<ReservationInfo>) {
-        _reservationApply.value = reservations
-    }
-
-    fun updateCompanionHistory(reservations: List<ReservationInfo>) {
-        _companionHistory.value = reservations
-    }
-
-    fun addReservationStatus(reservation: ReservationInfo) {
-        _reservationStatus.value += AccompanyInfo(reservationInfo = reservation)
-    }
-
-    fun addCompanionHistory(reservation: ReservationInfo) {
-        _companionHistory.value += reservation
-    }
-
-    fun removeReservationStatus(accompany: AccompanyInfo) {
-        _reservationStatus.value -= accompany
-    }
-
-    fun removeReservationApply(reservation: ReservationInfo) {
-        _reservationApply.value -= reservation
+    private fun postCoordinates() {
+        viewModelScope.launch {
+            combine(latitudeFlow, longitudeFlow) { latitude, longitude ->
+                Pair(latitude ?: 0.0, longitude ?: 0.0)
+            }.collectLatest { (latitude, longitude) ->
+                coordinatesRepository.postCoordinates(runningReservationId.value, CoordinatesDto(latitude, longitude))
+            }
+        }
     }
 }

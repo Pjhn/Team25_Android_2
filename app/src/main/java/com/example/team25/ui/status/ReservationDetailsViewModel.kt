@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class ReservationDetailsViewModel: ViewModel() {
-    private var _reservationInfo = MutableStateFlow<ReservationInfo>(ReservationInfo())
-    val reservationInfo: StateFlow<ReservationInfo> get() = _reservationInfo
+    private var _reservationInfo = MutableStateFlow<ReservationInfo?>(null)
+    val reservationInfo: StateFlow<ReservationInfo?> get() = _reservationInfo
 
     fun updateReservationInfo(reservationInfo: ReservationInfo) {
         _reservationInfo.value = reservationInfo

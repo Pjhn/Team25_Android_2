@@ -27,7 +27,7 @@ class CompanionCompleteHistoryRecyclerViewAdapter (
             val dateFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
 
             binding.userNameTextView.text = item.patient.patientName
-            binding.reservationDateTextView.text = dateFormat.format(item.serviceDate)
+            binding.reservationDateTextView.text = dateFormat.format(item.reservationDate)
 
             binding.showDetailsBtn.setOnClickListener {
                 detailsClickListener.onDetailsClicked(item)

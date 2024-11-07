@@ -12,6 +12,7 @@ import com.example.team25.databinding.ActivityPaymentHistoryBinding
 import com.example.team25.databinding.ActivityReservationDetailsBinding
 import com.example.team25.domain.model.Gender
 import com.example.team25.domain.model.ReservationInfo
+import com.example.team25.domain.model.toKorean
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -41,23 +42,20 @@ class ReservationDetailsActivity : AppCompatActivity() {
 
     private fun collectReservationInfo() {
         lifecycleScope.launch {
-            reservationDetailsViewModel.reservationInfo.collectLatest {
+            reservationDetailsViewModel.reservationInfo.collectLatest {reservationInfo ->
                 val dateFormat = SimpleDateFormat("yy.MM.dd a h시", Locale.KOREAN)
 
-                binding.locationDepartTextView.text = it.departure
-                binding.locationArriveTextView.text = it.destination
+                binding.locationDepartTextView.text = reservationInfo?.departureLocation
+                binding.locationArriveTextView.text = reservationInfo?.arrivalLocation
                 binding.companionDepartTimeInformationTextView.text =
-                    dateFormat.format(it.serviceDate)
-                binding.transportationInformationTextView.text = it.transportation
-                binding.requestDetailsInformationTextView.text = it.request
+                    dateFormat.format(reservationInfo?.reservationDate)
+                binding.transportationInformationTextView.text = reservationInfo?.transportation
+                binding.requestDetailsInformationTextView.text = "없음"
 
-                binding.userNameInformationTextView.text = it.patient.patientName
-                binding.userGenderInformationTextView.text = when (it.patient.patientGender) {
-                    Gender.MALE -> "남"
-                    Gender.FEMALE -> "여"
-                }
-                binding.userBirthInformationTextView.text = it.patient.patientBirth.plus("-*******")
-                binding.userPhoneNumberInformationTextView.text = it.patient.patientPhone
+                binding.userNameInformationTextView.text = reservationInfo?.patient?.patientPhone
+                binding.userGenderInformationTextView.text = reservationInfo?.patient?.patientGender?.toKorean()
+                binding.userBirthInformationTextView.text = reservationInfo?.patient?.patientBirth.plus("-*******")
+                binding.userPhoneNumberInformationTextView.text = reservationInfo?.patient?.patientPhone
             }
         }
     }
