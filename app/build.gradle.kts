@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.team25"
+    namespace = "com.kakaotech.team25M"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.team25"
+        applicationId = "com.kakaotech.team25M"
         minSdk = 27
         targetSdk = 34
         versionCode = 1
@@ -32,7 +32,18 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
+        }
+
+        debug {
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
@@ -45,15 +56,6 @@ android {
         buildConfig = true
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
