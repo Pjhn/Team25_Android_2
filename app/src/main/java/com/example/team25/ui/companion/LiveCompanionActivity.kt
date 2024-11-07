@@ -13,8 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.team25.R
+import com.example.team25.data.network.dto.AccompanyDto
+import com.example.team25.data.network.services.LocationUpdateService
 import com.example.team25.databinding.ActivityLiveCompanionBinding
 import com.example.team25.domain.model.Coordinates
+import com.example.team25.domain.model.ReservationStatus
+import com.example.team25.domain.model.ReservationStatus.완료
 import com.example.team25.ui.status.CompanionCompleteDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -88,33 +92,25 @@ class LiveCompanionActivity : AppCompatActivity() {
         labelManager.layer?.addLabel(labelOptions)
     }
 
-    private fun updateMapLocation(kakaoMap: KakaoMap, coordinates: Coordinates) {
-        val newLatLng = LatLng.from(coordinates.latitude, coordinates.longitude)
+    private fun updateMapLocation(kakaoMap: KakaoMap, latLng: LatLng) {
         val labelManager = kakaoMap.labelManager
 
-        kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(newLatLng))
+        kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(latLng))
 
-        if (labelManager != null) updateLabelsToMap(labelManager, newLatLng)
+        if (labelManager != null) updateLabelsToMap(labelManager, latLng)
     }
 
     private fun setupObserves() {
-        collectAccompanyInfo()
+        collectRunningReservation()
         collectCoordinates()
-        collectStatusMessage()
+        collectAccompanyInfoList()
     }
 
-    private fun collectAccompanyInfo() {
+    private fun collectRunningReservation() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                liveCompanionViewModel.accompanyInfo.collectLatest { accompanyInfo ->
-                    val name = accompanyInfo.reservationInfo.patient.patientName
-
-                    liveCompanionViewModel.updateCoordinates(
-                        accompanyInfo.latitude,
-                        accompanyInfo.longitude
-                    )
-
-                    updateManagerStatus(name)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                liveCompanionViewModel.runningReservation.collectLatest { reservationInfo ->
+                    binding.patientNameTextView.text = reservationInfo.patient.patientName
                 }
             }
         }
@@ -122,32 +118,30 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun collectCoordinates() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val kakaoMap = kakaoMapDeferred.await()
 
-                liveCompanionViewModel.coordinates.collectLatest { coordinates ->
-                    updateMapLocation(kakaoMap, coordinates)
+                liveCompanionViewModel.coordinatesInfo.collectLatest { latlng ->
+                    updateMapLocation(kakaoMap, latlng)
                 }
             }
         }
     }
 
-    private fun collectStatusMessage() {
+    private fun collectAccompanyInfoList() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                liveCompanionViewModel.statusMessages.collectLatest { statusMessages ->
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                liveCompanionViewModel.accompanyInfoList.collectLatest { accompanyInfoList ->
+                    val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
+
                     (binding.liveCompanionRecyclerView.adapter as? LiveCompanionRecyclerViewAdapter)?.submitList(
-                        statusMessages
+                        accompanyInfoList.map { dateFormat.format(it.statusDate) + " " + it.statusDescribe }
                     )
                     binding.liveCompanionRecyclerView.visibility =
-                        if (statusMessages.isEmpty()) View.GONE else View.VISIBLE
+                        if (accompanyInfoList.isEmpty()) View.GONE else View.VISIBLE
                 }
             }
         }
-    }
-
-    private fun updateManagerStatus(name: String) {
-        binding.patientNameTextView.text = name
     }
 
     private fun setLiveCompanionRecyclerViewAdapter() {
@@ -163,34 +157,38 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setCompanionStatusInputFormClickListener() {
         binding.companionStatusInputBtn.setOnClickListener {
-            val formattedDate = getCurrentFormattedDateTime()
-            val message = formattedDate + " " + binding.companionStatusInputEditText.text
+            val currentDate = getCurrentFormattedDateTime()
+            val statusDescribe = binding.companionStatusInputEditText.text.toString()
 
-            liveCompanionViewModel.addStatusMessage(message)
+            liveCompanionViewModel.postAccompanyInfo(
+                liveCompanionViewModel.reservationId.value,
+                AccompanyDto("병원 이동", currentDate, statusDescribe)
+            )
 
+            collectAccompanyInfoList()
             binding.companionStatusInputEditText.text.clear()
         }
     }
 
-    // 다이얼 로그에 예약 정보도 같이 전달
     private fun setCompanionCompleteBtnClickListener() {
         binding.completeCompanionBtn.setOnClickListener {
-            val reservationInfo = liveCompanionViewModel.accompanyInfo.value.reservationInfo
-            val companionCompleteDialog = CompanionCompleteDialog.newInstance(reservationInfo)
+            val companionCompleteDialog =
+                CompanionCompleteDialog.newInstance(liveCompanionViewModel.runningReservation.value)
 
             stopLocationService()
-            companionCompleteDialog.show(supportFragmentManager,"CompanionCompleteDialog")
+            liveCompanionViewModel.changeReservation(liveCompanionViewModel.reservationId.value, 완료)
+            companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
         }
     }
 
-    private fun stopLocationService(){
-        //val intent = Intent(this, LocationUpdateService::class.java)
+    private fun stopLocationService() {
+        val intent = Intent(this, LocationUpdateService::class.java)
         this.stopService(intent)
     }
 
     private fun getCurrentFormattedDateTime(): String {
         val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm", Locale.KOREAN)
+        val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm:ss", Locale.KOREAN)
 
         return dateFormat.format(currentTime)
     }
