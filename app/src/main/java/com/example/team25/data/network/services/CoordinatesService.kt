@@ -9,13 +9,13 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface CoordinatesService {
-    @POST("/api/manager/coord/{reservation_id}")
+    @POST("/api/manager/tracking/{reservation_id}/location")
     suspend fun postCoordinates(
         @Path("reservation_id") reservationId: String,
         @Body coordinatesDto: CoordinatesDto
     ): Response<ServiceResponse<CoordinatesDto>>
 
-    @GET("/api/coord/{reservation_id}")
+    @GET("/api/tracking/{reservation_id}/location")
     suspend fun getCoordinates(
         @Path("reservation_id") reservationId: String
     ): Response<ServiceResponse<CoordinatesDto>>

@@ -3,11 +3,8 @@ package com.example.team25.ui.companion
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -16,9 +13,7 @@ import com.example.team25.R
 import com.example.team25.data.network.dto.AccompanyDto
 import com.example.team25.data.network.services.LocationUpdateService
 import com.example.team25.databinding.ActivityLiveCompanionBinding
-import com.example.team25.domain.model.Coordinates
-import com.example.team25.domain.model.ReservationStatus
-import com.example.team25.domain.model.ReservationStatus.완료
+import com.example.team25.domain.model.ReservationStatus.*
 import com.example.team25.ui.status.CompanionCompleteDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -164,7 +159,7 @@ class LiveCompanionActivity : AppCompatActivity() {
 
             liveCompanionViewModel.postAccompanyInfo(
                 liveCompanionViewModel.reservationId.value,
-                AccompanyDto("병원 이동", currentDate, statusDescribe)
+                AccompanyDto("병원 이동", statusDate = currentDate, statusDescribe = statusDescribe)
             )
 
             collectAccompanyInfoList()
