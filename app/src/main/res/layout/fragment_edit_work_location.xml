@@ -84,10 +84,11 @@
         android:layout_height="70dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
-        android:hint="@string/input_sigungu"
-        android:paddingStart="10dp"
-        android:orientation="horizontal"
         android:background="@drawable/edit_text_box"
+        android:hint="@string/input_sigungu"
+        android:maxLength="10"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/select_city"
         app:layout_constraintTop_toBottomOf="@+id/select_city">
@@ -103,6 +104,6 @@
         android:text="@string/edit_complete"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kakaotech.team25M.data.network.dto.PatchCommentDto
 import com.kakaotech.team25M.data.network.dto.PatchImageDto
 import com.kakaotech.team25M.data.network.dto.PatchLocationDto
 import com.kakaotech.team25M.data.network.dto.ProfileDto
@@ -13,6 +14,7 @@ import com.kakaotech.team25M.domain.model.WorkTimeDomain
 import com.kakaotech.team25M.domain.model.toDto
 import com.kakaotech.team25M.domain.usecase.GetImageUriUseCase
 import com.kakaotech.team25M.domain.usecase.GetProfileUseCase
+import com.kakaotech.team25M.domain.usecase.PatchCommentUseCase
 import com.kakaotech.team25M.domain.usecase.PatchImageUseCase
 import com.kakaotech.team25M.domain.usecase.PatchLocationUseCase
 import com.kakaotech.team25M.domain.usecase.PatchTimeUseCase
@@ -30,7 +32,8 @@ class ManagerInformationViewModel @Inject constructor(
     private val s3UploadUseCase: S3UploadUseCase,
     private val patchImageUseCase: PatchImageUseCase,
     private val patchLocationUseCase: PatchLocationUseCase,
-    private val patchTimeUseCase: PatchTimeUseCase
+    private val patchTimeUseCase: PatchTimeUseCase,
+    private val patchCommentUseCase: PatchCommentUseCase
 ) : ViewModel() {
 
     companion object {
@@ -56,6 +59,9 @@ class ManagerInformationViewModel @Inject constructor(
 
     private val _timePatched = MutableStateFlow(PatchStatus.DEFAULT)
     val timePatched: StateFlow<PatchStatus> = _timePatched
+
+    private val _commentPatched = MutableStateFlow(PatchStatus.DEFAULT)
+    val commentPatched: StateFlow<PatchStatus> = _commentPatched
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -187,6 +193,15 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun getComment(): String? {
+        return if (_comment.value != "" && _comment.value != "한 마디를 등록해주세요") {
+            _comment.value
+        } else {
+            null
+        }
+    }
+
+
     fun getTime(): WorkTimeDomain {
         return WorkTimeDomain(
             monStartTime = _monStartTime.value,
@@ -210,7 +225,7 @@ class ManagerInformationViewModel @Inject constructor(
         _name.value = "Unknown"
         _workingRegion.value = "지역을 등록해주세요"
         _career.value = "No career info"
-        _comment.value = "No comment available"
+        _comment.value = "한 마디를 등록해주세요"
         _profileImage.value = ""
         _gender.value = Gender.MALE
 
@@ -274,6 +289,21 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun patchComment(comment: String) {
+        val patchCommentDto = PatchCommentDto(
+            newComment = comment
+        )
+
+        viewModelScope.launch {
+            val result = patchCommentUseCase(patchCommentDto)
+            _commentPatched.value = if (result.isSuccess) {
+                PatchStatus.SUCCESS
+            } else {
+                PatchStatus.FAILURE
+            }
+        }
+    }
+
     fun patchTime(workTime: WorkTimeDomain) {
         val patchTimeDto = workTime.toDto()
 
@@ -305,6 +335,10 @@ class ManagerInformationViewModel @Inject constructor(
 
     fun updateTimePatchStatus(status: PatchStatus) {
         _timePatched.value = status
+    }
+
+    fun updateCommentPatchStatus(status: PatchStatus) {
+        _commentPatched.value = status
     }
 
 }

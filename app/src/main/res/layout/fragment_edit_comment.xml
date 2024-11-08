@@ -37,6 +37,7 @@
         android:background="@drawable/gray_outlined_box"
         android:hint="@string/introduction_example"
         android:padding="10dp"
+        android:maxLength="20"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_write_comment_text_view"/>
