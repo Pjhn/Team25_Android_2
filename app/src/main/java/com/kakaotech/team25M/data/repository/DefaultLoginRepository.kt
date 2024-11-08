@@ -10,6 +10,7 @@ import com.kakaotech.team25M.di.TokenDataStore
 import com.kakaotech.team25M.domain.repository.LoginRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import java.time.Instant
 import javax.inject.Inject
 
 class DefaultLoginRepository @Inject constructor(
@@ -51,12 +52,15 @@ class DefaultLoginRepository @Inject constructor(
         accessTokenExpiresIn: Long,
         refreshTokenExpiresIn: Long
     ) {
+        val currentTime = Instant.now().epochSecond
+
         tokenDataStore.updateData { currentTokens ->
             currentTokens.toBuilder()
                 .setAccessToken(accessToken)
                 .setRefreshToken(refreshToken)
                 .setAccessTokenExpiresIn(accessTokenExpiresIn)
                 .setRefreshTokenExpiresIn(refreshTokenExpiresIn)
+                .setLoginTime(currentTime)
                 .build()
         }
 
@@ -77,6 +81,7 @@ class DefaultLoginRepository @Inject constructor(
                 .clearRefreshToken()
                 .clearAccessTokenExpiresIn()
                 .clearRefreshTokenExpiresIn()
+                .clearLoginTime()
                 .build()
         }
     }
