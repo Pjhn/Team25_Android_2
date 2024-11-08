@@ -21,6 +21,7 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 @AndroidEntryPoint
 class LoginEntryActivity : AppCompatActivity() {
@@ -42,10 +43,19 @@ class LoginEntryActivity : AppCompatActivity() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val tokens = loginViewModel.getSavedTokens()
                 if (tokens != null && tokens.accessToken.isNotEmpty()) {
-                    val status = loginViewModel.getUserStatus()
-                    Log.d("testt", status.toString())
-                    navigateBasedOnRoleAuto(status)
+                    val currentTime = Instant.now().epochSecond * 1000
+                    val expirationTime = tokens.loginTime * 1000 + tokens.refreshTokenExpiresIn
+                    val timeThreshold = 7 * 24 * 60 * 60000L
 
+                    if (currentTime >= expirationTime - timeThreshold) {
+                        loginViewModel.logout()
+                        binding.kakaoLoginBtn.visibility = View.VISIBLE
+                        return@repeatOnLifecycle
+                    } else {
+                        val status = loginViewModel.getUserStatus()
+                        Log.d("testt", status.toString())
+                        navigateBasedOnRoleAuto(status)
+                    }
                 } else {
                     binding.kakaoLoginBtn.visibility = View.VISIBLE
                 }
