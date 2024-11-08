@@ -23,6 +23,7 @@
 
 # 서버 통신 관련 클래스와 인터페이스를 유지합니다.
 -keep class com.kakaotech.team25M.data.network.** { *; }
+-keep class com.kakaotech.team25M.domain.model.** { *; }
 
 # Keep Dagger Hilt classes and annotations
 -keep class dagger.hilt.** { *; }

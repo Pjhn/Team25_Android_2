@@ -54,7 +54,6 @@
                 android:id="@+id/monday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -127,7 +126,6 @@
                 android:id="@+id/tuesday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -200,7 +198,6 @@
                 android:id="@+id/wednesday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -273,7 +270,6 @@
                 android:id="@+id/thursday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -346,7 +342,6 @@
                 android:id="@+id/friday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -419,7 +414,6 @@
                 android:id="@+id/saturday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -492,7 +486,6 @@
                 android:id="@+id/sunday_time_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:visibility="gone"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputLayout

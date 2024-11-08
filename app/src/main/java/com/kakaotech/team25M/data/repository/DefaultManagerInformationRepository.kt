@@ -3,6 +3,7 @@ package com.kakaotech.team25M.data.repository
 import android.util.Log
 import com.kakaotech.team25M.data.network.dto.PatchImageDto
 import com.kakaotech.team25M.data.network.dto.PatchLocationDto
+import com.kakaotech.team25M.data.network.dto.PatchTimeDto
 import com.kakaotech.team25M.data.network.dto.ProfileDto
 import com.kakaotech.team25M.data.network.services.ManagerInformationService
 import com.kakaotech.team25M.domain.repository.ManagerInformationRepository
@@ -66,6 +67,27 @@ class DefaultManagerInformationRepository @Inject constructor(
             } else {
                 Log.e(TAG, "Location Patch failed with status code: ${response.code()}")
                 Result.failure(Exception("Location Patch failed"))
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception occurred: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun patchTime(patchTimeDto: PatchTimeDto): Result<String?> {
+        return try {
+            val response = managerInformationService.patchTime(patchTimeDto)
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                if (responseBody != null && responseBody.status == true) {
+                    Result.success(responseBody.message)
+                } else {
+                    Log.e(TAG, "Invalid response body or status is false")
+                    Result.failure(Exception("Invalid response"))
+                }
+            } else {
+                Log.e(TAG, "Time Patch failed with status code: ${response.code()}")
+                Result.failure(Exception("Time Patch failed"))
             }
         } catch (e: Exception) {
             Log.e(TAG, "Exception occurred: ${e.message}", e)

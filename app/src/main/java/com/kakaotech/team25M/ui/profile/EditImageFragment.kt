@@ -49,6 +49,7 @@ class EditImageFragment : Fragment() {
                     when (isPatched) {
                         PatchStatus.SUCCESS -> {
                             managerInformationViewModel.updateImagePatchStatus(PatchStatus.DEFAULT)
+                            Toast.makeText(requireContext(), "프로필 이미지 변경 완료", Toast.LENGTH_SHORT).show()
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
                         PatchStatus.FAILURE -> {
