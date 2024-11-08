@@ -62,6 +62,7 @@ class EditWorkLocationFragment : Fragment() {
                     when (isPatched) {
                         PatchStatus.SUCCESS -> {
                             managerInformationViewModel.updateLocationPatchStatus(PatchStatus.DEFAULT)
+                            Toast.makeText(requireContext(), "근무 지역 변경 완료", Toast.LENGTH_SHORT).show()
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
                         PatchStatus.FAILURE -> {

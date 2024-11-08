@@ -9,10 +9,13 @@ import com.kakaotech.team25M.data.network.dto.PatchLocationDto
 import com.kakaotech.team25M.data.network.dto.ProfileDto
 import com.kakaotech.team25M.domain.model.Gender
 import com.kakaotech.team25M.domain.model.ImageFolder
+import com.kakaotech.team25M.domain.model.WorkTimeDomain
+import com.kakaotech.team25M.domain.model.toDto
 import com.kakaotech.team25M.domain.usecase.GetImageUriUseCase
 import com.kakaotech.team25M.domain.usecase.GetProfileUseCase
 import com.kakaotech.team25M.domain.usecase.PatchImageUseCase
 import com.kakaotech.team25M.domain.usecase.PatchLocationUseCase
+import com.kakaotech.team25M.domain.usecase.PatchTimeUseCase
 import com.kakaotech.team25M.domain.usecase.S3UploadUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,7 @@ class ManagerInformationViewModel @Inject constructor(
     private val s3UploadUseCase: S3UploadUseCase,
     private val patchImageUseCase: PatchImageUseCase,
     private val patchLocationUseCase: PatchLocationUseCase,
+    private val patchTimeUseCase: PatchTimeUseCase
 ) : ViewModel() {
 
     companion object {
@@ -49,6 +53,9 @@ class ManagerInformationViewModel @Inject constructor(
 
     private val _locationPatched = MutableStateFlow(PatchStatus.DEFAULT)
     val locationPatched: StateFlow<PatchStatus> = _locationPatched
+
+    private val _timePatched = MutableStateFlow(PatchStatus.DEFAULT)
+    val timePatched: StateFlow<PatchStatus> = _timePatched
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -180,6 +187,25 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun getTime(): WorkTimeDomain {
+        return WorkTimeDomain(
+            monStartTime = _monStartTime.value,
+            monEndTime = _monEndTime.value,
+            tueStartTime = _tueStartTime.value,
+            tueEndTime = _tueEndTime.value,
+            wedStartTime = _wedStartTime.value,
+            wedEndTime = _wedEndTime.value,
+            thuStartTime = _thuStartTime.value,
+            thuEndTime = _thuEndTime.value,
+            friStartTime = _friStartTime.value,
+            friEndTime = _friEndTime.value,
+            satStartTime = _satStartTime.value,
+            satEndTime = _satEndTime.value,
+            sunStartTime = _sunStartTime.value,
+            sunEndTime = _sunEndTime.value
+        )
+    }
+
     private fun resetProfileData() {
         _name.value = "Unknown"
         _workingRegion.value = "지역을 등록해주세요"
@@ -248,6 +274,19 @@ class ManagerInformationViewModel @Inject constructor(
         }
     }
 
+    fun patchTime(workTime: WorkTimeDomain) {
+        val patchTimeDto = workTime.toDto()
+
+        viewModelScope.launch {
+            val result = patchTimeUseCase(patchTimeDto)
+            _timePatched.value = if (result.isSuccess) {
+                PatchStatus.SUCCESS
+            } else {
+                PatchStatus.FAILURE
+            }
+        }
+    }
+
     fun updateProfileImage(newImage: String) {
         _newProfileImage.value = newImage
     }
@@ -262,6 +301,10 @@ class ManagerInformationViewModel @Inject constructor(
 
     fun updateLocationPatchStatus(status: PatchStatus) {
         _locationPatched.value = status
+    }
+
+    fun updateTimePatchStatus(status: PatchStatus) {
+        _timePatched.value = status
     }
 
 }
