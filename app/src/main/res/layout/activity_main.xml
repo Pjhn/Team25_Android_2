@@ -7,16 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
+    <TextView
+        android:id="@+id/logout_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="30dp"
+        android:text="@string/logout"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/profile_card_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginTop="20dp"
         app:cardCornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="@id/logout_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/logout_text_view">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -35,7 +47,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/manager_name_edit_text"
+                android:id="@+id/manager_name_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -53,13 +65,14 @@
                 android:text="@string/manager_sir"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/manager_name_edit_text"
-                app:layout_constraintStart_toEndOf="@id/manager_name_edit_text" />
+                app:layout_constraintBottom_toBottomOf="@id/manager_name_text_view"
+                app:layout_constraintStart_toEndOf="@id/manager_name_text_view" />
 
             <ImageView
                 android:id="@+id/profile_image_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:src="@drawable/profile_base"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -96,9 +109,9 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="2dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/baseline_arrow_forward_black" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -157,9 +170,9 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginStart="2dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/baseline_arrow_forward_black" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -187,5 +200,17 @@
             android:textSize="12sp" />
 
     </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/withdraw_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/withdraw_membership"
+        android:textColor="@color/red"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/logout_text_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
