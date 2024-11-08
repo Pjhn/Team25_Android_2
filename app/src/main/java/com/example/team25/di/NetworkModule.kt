@@ -8,6 +8,7 @@ import com.example.team25.data.network.interceptor.TokenInterceptor
 import com.example.team25.data.network.services.AccompanyService
 import com.example.team25.data.network.services.CoordinatesService
 import com.example.team25.data.network.services.ManagerService
+import com.example.team25.data.network.services.ReportService
 import com.example.team25.data.network.services.ReservationService
 import com.example.team25.data.network.services.UserService
 import com.example.team25.data.remote.SignIn
@@ -94,6 +95,12 @@ object NetworkModule {
     @Singleton
     fun provideReservationService(@GeneralRetrofit retrofit: Retrofit): ReservationService {
         return retrofit.create(ReservationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReportService(@GeneralRetrofit retrofit: Retrofit): ReportService {
+        return retrofit.create(ReportService::class.java)
     }
 
     @Provides
