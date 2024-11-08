@@ -19,9 +19,4 @@ interface ManagerService {
 
     @GET("/api/manager/name")
     suspend fun getName(): Response<NameDto>
-
-    @PATCH("/api/manager/image")
-    suspend fun patchImage(
-        @Body pathImageDto: PatchImageDto
-    ): Response<PatchImageResponse>
 }

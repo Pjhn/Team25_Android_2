@@ -99,6 +99,7 @@
 
     <string-array name="sido_option">
         <item>서울</item>
+        <item>부산광역시</item>
         <item>부산</item>
         <item>인천</item>
         <item>대구</item>
