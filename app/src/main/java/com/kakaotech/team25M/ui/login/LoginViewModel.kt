@@ -10,6 +10,7 @@ import com.kakaotech.team25M.domain.model.UserStatus
 import com.kakaotech.team25M.domain.usecase.GetSavedTokensUseCase
 import com.kakaotech.team25M.domain.usecase.GetUserStatusUseCase
 import com.kakaotech.team25M.domain.usecase.LoginUseCase
+import com.kakaotech.team25M.domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val getSavedTokensUseCase: GetSavedTokensUseCase,
     private val getUserStatusUseCase: GetUserStatusUseCase,
+    private val logoutUseCase: LogoutUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -66,6 +68,12 @@ class LoginViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.d("testt", e.message.toString())
             null
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch(ioDispatcher) {
+            logoutUseCase()
         }
     }
 }
