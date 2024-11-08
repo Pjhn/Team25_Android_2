@@ -13,6 +13,7 @@ import com.example.team25.domain.repository.AccompanyRepository
 import com.example.team25.domain.repository.CoordinatesRepository
 import com.example.team25.domain.repository.ReservationRepository
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class LiveCompanionViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val coordinatesRepository: CoordinatesRepository,

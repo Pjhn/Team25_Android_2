@@ -29,12 +29,14 @@ import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@AndroidEntryPoint
 class LiveCompanionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLiveCompanionBinding
     private val kakaoMapDeferred = CompletableDeferred<KakaoMap>()
