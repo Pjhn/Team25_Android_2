@@ -1,6 +1,7 @@
 [versions]
 activityKtx = "1.9.2"
 agp = "8.3.2"
+auth = "2.20.35"
 awsAndroidSdkCognito = "2.77.0"
 awsAndroidSdkS3 = "2.77.0"
 glide = "4.12.0"
@@ -30,6 +31,7 @@ fragmentKtx = "1.8.3"
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+auth = { module = "software.amazon.awssdk:auth", version.ref = "auth" }
 aws-android-sdk-cognito = { module = "com.amazonaws:aws-android-sdk-cognito", version.ref = "awsAndroidSdkCognito" }
 aws-android-sdk-core = { module = "com.amazonaws:aws-android-sdk-core", version.ref = "awsAndroidSdkCognito" }
 aws-android-sdk-mobile-client = { module = "com.amazonaws:aws-android-sdk-mobile-client", version.ref = "awsAndroidSdkCognito" }
