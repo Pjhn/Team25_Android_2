@@ -1,5 +1,13 @@
 package com.kakaotech.team25M.di
 
+import com.kakaotech.team25M.data.repository.DefaultAccompanyRepository
+import com.kakaotech.team25M.data.repository.DefaultCoordinatesRepository
+import com.kakaotech.team25M.data.repository.DefaultReportRepository
+import com.kakaotech.team25M.data.repository.DefaultReservationRepository
+import com.kakaotech.team25M.domain.repository.AccompanyRepository
+import com.kakaotech.team25M.domain.repository.CoordinatesRepository
+import com.kakaotech.team25M.domain.repository.ReportRepository
+import com.kakaotech.team25M.domain.repository.ReservationRepository
 import com.kakaotech.team25M.data.repository.DefaultManagerInformationRepository
 import com.kakaotech.team25M.data.repository.DefaultManagerRepository
 import com.kakaotech.team25M.data.repository.DefaultS3Repository
@@ -29,6 +37,22 @@ abstract class ViewmodelModule {
     @Binds
     @ViewModelScoped
     abstract fun bindUserRepository(defaultUserRepository: DefaultUserRepository): UserRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindAccompanyRepository(defaultAccompanyRepository: DefaultAccompanyRepository): AccompanyRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindCoordinatesRepository(defaultCoordinatesRepository: DefaultCoordinatesRepository): CoordinatesRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindReservationRepository(defaultReservationRepository: DefaultReservationRepository): ReservationRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindReportRepository(defaultReportRepository: DefaultReportRepository): ReportRepository
 
     @Binds
     @ViewModelScoped

@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.kakaotech.team25M.databinding.ActivityLoginEntryBinding
 import com.kakaotech.team25M.domain.model.UserStatus
 import com.kakaotech.team25M.ui.main.MainActivity
 import com.kakaotech.team25M.ui.register.RegisterEntryActivity
@@ -19,6 +18,7 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.kakaotech.team25M.databinding.ActivityLoginEntryBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.Instant

@@ -48,7 +48,7 @@
                 android:layout_marginStart="28dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/reservation_status"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

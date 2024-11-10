@@ -2,7 +2,6 @@ package com.kakaotech.team25M.data.repository
 
 import android.util.Log
 import com.kakaotech.team25M.data.network.dto.ManagerRegisterDto
-import com.kakaotech.team25M.data.network.dto.PatchImageDto
 import com.kakaotech.team25M.data.network.services.ManagerService
 import com.kakaotech.team25M.domain.repository.ManagerRepository
 import javax.inject.Inject

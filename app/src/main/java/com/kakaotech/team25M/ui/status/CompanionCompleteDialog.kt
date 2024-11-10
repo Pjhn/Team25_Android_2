@@ -1,7 +1,6 @@
 package com.kakaotech.team25M.ui.status
 
 import android.app.Dialog
-import com.kakaotech.team25M.databinding.ViewCompanionCompleteDialogBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -9,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import com.kakaotech.team25M.databinding.ViewCompanionCompleteDialogBinding
 
 
 class CompanionCompleteDialog :

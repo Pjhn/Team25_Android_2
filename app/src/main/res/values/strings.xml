@@ -300,7 +300,7 @@
         <item>병원 미운영</item>
         <item>기타</item>
     </string-array>
-    <string name="complete_companion_task">동행업무를 완료하시겠습니까?</string>
+    <string name="complete_companion_task">동행업무를 완료하셨습니다</string>
     <string name="prompt_write_report_info">리포트를 작성하여 진료 정보를\n알려주세요</string>
     <string name="write_report">리포트 작성</string>
     <string name="cancel">취소</string>

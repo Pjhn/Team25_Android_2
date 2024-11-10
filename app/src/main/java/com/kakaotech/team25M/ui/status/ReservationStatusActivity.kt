@@ -1,14 +1,12 @@
 package com.kakaotech.team25M.ui.status
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -17,9 +15,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kakaotech.team25M.domain.model.ReservationStatus.*
 import com.kakaotech.team25M.data.network.services.LocationUpdateService
-import com.kakaotech.team25M.databinding.ActivityReservationStatusBinding
-import com.kakaotech.team25M.domain.model.AccompanyInfo
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.ui.status.utils.RequestPermission.isPermissionSetGranted
 import com.kakaotech.team25M.ui.status.adapter.CompanionCompleteHistoryRecyclerViewAdapter
@@ -34,14 +31,14 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.kakaotech.team25M.databinding.ActivityReservationStatusBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ReservationStatusActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReservationStatusBinding
-    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private val reservationStatusViewModel: ReservationStatusViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +52,6 @@ class ReservationStatusActivity : AppCompatActivity() {
         setReservationApplyRecyclerViewAdapter()
         setCompanionCompleteHistoryRecyclerViewAdapter()
         setObserves()
-        setResultLauncher()
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -83,7 +79,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkLocationSettingsAndStartService(accompanyInfo: AccompanyInfo) {
+    private fun checkLocationSettingsAndStartService(reservationId: String) {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
             5000L
@@ -98,7 +94,10 @@ class ReservationStatusActivity : AppCompatActivity() {
 
         task.addOnSuccessListener {
             startLocationService()
-            reservationStatusViewModel.updateAccompanyInfo(accompanyInfo, true)
+            reservationStatusViewModel.updateRunningReservationId(reservationId)
+            reservationStatusViewModel.changeReservation(reservationId, 진행중)
+            reservationStatusViewModel.postStartedAccompanyInfo(reservationId)
+            setObserves()
         }.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
@@ -135,70 +134,39 @@ class ReservationStatusActivity : AppCompatActivity() {
     }
 
     private fun setObserves() {
-        collectServiceState()
-        collectReservationStatus()
-        collectReservationApply()
-        collectCompanionHistory()
+        collectConfirmedOrRunningReservations()
+        collectPendingReservations()
+        collectCompletedReservations()
     }
 
-    private fun setResultLauncher() {
-        resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val reservationInfo =
-                        result.data?.getParcelableExtra<ReservationInfo>("ReservationInfo")
-                    reservationInfo?.let {
-                        reservationStatusViewModel.removeReservationApply(it)
-                    }
-                }
-            }
-    }
-
-    private fun collectServiceState() {
+    private fun collectConfirmedOrRunningReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                combine(
-                    reservationStatusViewModel.isServiceRunning,
-                    reservationStatusViewModel.runningAccompanyId
-                ) { isRunning, accompanyId ->
-                    Pair(isRunning, accompanyId)
-                }.collect { (isRunning, accompanyId) ->
-                    if (accompanyId != null && isRunning != null) {
-                        reservationStatusViewModel.updateReservationStatus(accompanyId, isRunning)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun collectReservationStatus() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.reservationStatus.collect {
+                reservationStatusViewModel.confirmedOrRunningReservations.collectLatest { reservations ->
                     (binding.reservationStatusRecyclerView.adapter as? ReservationStatusRecyclerViewAdapter)
-                        ?.submitList(it)
+                        ?.submitList(reservations)
                 }
             }
         }
     }
 
-    private fun collectReservationApply() {
+    private fun collectPendingReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.reservationApply.collect {
+                reservationStatusViewModel.pendingReservations.collectLatest { reservations ->
                     (binding.reservationApplyRecyclerView.adapter as? ReservationApplyRecyclerViewAdapter)
-                        ?.submitList(it)
+                        ?.submitList(reservations)
                 }
             }
         }
     }
 
-    private fun collectCompanionHistory() {
+    private fun collectCompletedReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.companionHistory.collect {
+                reservationStatusViewModel.completedReservations.collectLatest { reservations ->
                     (binding.companionCompleteHistoryRecyclerView.adapter as? CompanionCompleteHistoryRecyclerViewAdapter)
-                        ?.submitList(it)
+                        ?.submitList(reservations)
                 }
             }
         }
@@ -206,30 +174,22 @@ class ReservationStatusActivity : AppCompatActivity() {
 
     private fun setReservationStatusRecyclerViewAdapter() {
         val companionStartClickListener = object : OnCompanionStartClickListener {
-            override fun onStartClicked(accompanyInfo: AccompanyInfo) {
-                val isServiceRunning = reservationStatusViewModel.isServiceRunning.value ?: false
-
+            override fun onStartClicked(reservationInfo: ReservationInfo) {
                 if (isPermissionSetGranted(this@ReservationStatusActivity)) {
-                    if(!isServiceRunning){
-                        checkLocationSettingsAndStartService(accompanyInfo)
-                    }else{
-                        Toast.makeText(this@ReservationStatusActivity, "이미 진행중인 동행 서비스가 있습니다.\n동행 완료 버튼을 눌러 종료해 주세요", Toast.LENGTH_SHORT).show()
-                    }
+                    checkLocationSettingsAndStartService(reservationInfo.reservationId)
                 } else {
                     requestRequiredPermission()
                 }
             }
 
-            override fun onCompleteClicked(accompanyInfo: AccompanyInfo) {
-                val reservationInfo = accompanyInfo.reservationInfo
+            override fun onCompleteClicked(reservationInfo: ReservationInfo) {
                 val companionCompleteDialog =
                     CompanionCompleteDialog.newInstance(reservationInfo)
 
                 stopLocationService()
+                reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 완료)
+                reservationStatusViewModel.postCompletedAccompanyInfo(reservationInfo.reservationId)
                 companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
-                reservationStatusViewModel.updateAccompanyInfo(accompanyInfo, false)
-                reservationStatusViewModel.removeReservationStatus(accompanyInfo)
-                reservationStatusViewModel.addCompanionHistory(reservationInfo)
             }
         }
 
@@ -262,6 +222,7 @@ class ReservationStatusActivity : AppCompatActivity() {
             }
         }
         val adapter = CompanionCompleteHistoryRecyclerViewAdapter(onShowDetailsClickListener)
+
         binding.companionCompleteHistoryRecyclerView.adapter = adapter
         binding.companionCompleteHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -269,15 +230,15 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun setReservationApplyRecyclerViewAdapter() {
         val onReservationApplyClickListener = object : OnReservationApplyClickListener {
             override fun onAcceptClicked(item: ReservationInfo) {
-                reservationStatusViewModel.addReservationStatus(item)
-                reservationStatusViewModel.removeReservationApply(item)
+                reservationStatusViewModel.changeReservation(item.reservationId, 확정)
+                setObserves()
             }
 
             override fun onRefuseClicked(item: ReservationInfo) {
                 val intent =
                     Intent(this@ReservationStatusActivity, ReservationRejectActivity::class.java)
                 intent.putExtra("ReservationInfo", item)
-                resultLauncher.launch(intent)
+                startActivity(intent)
             }
         }
 
@@ -297,7 +258,6 @@ class ReservationStatusActivity : AppCompatActivity() {
 
         binding.reservationApplyRecyclerView.adapter = adapter
         binding.reservationApplyRecyclerView.layoutManager = LinearLayoutManager(this)
-
     }
 
     private fun showNotificationPermissionDialog() {
