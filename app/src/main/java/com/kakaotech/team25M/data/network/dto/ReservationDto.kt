@@ -10,7 +10,7 @@ data class ReservationDto(
     @SerializedName("reservationStatus") val reservationStatus: ReservationStatus,
     @SerializedName("departureLocation") val departureLocation: String,
     @SerializedName("arrivalLocation") val arrivalLocation: String,
-    @SerializedName("reservationDate") val reservationDate: String,
+    @SerializedName("reservationDateTime") val reservationDate: String,
     @SerializedName("serviceType") val serviceType: String,
     @SerializedName("transportation") val transportation: String,
     @SerializedName("price") val price: Int,
