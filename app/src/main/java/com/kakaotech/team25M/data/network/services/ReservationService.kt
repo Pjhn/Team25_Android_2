@@ -10,7 +10,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.Path
 
 interface ReservationService {
-    @GET("/api/reservations")
+    @GET("/api/reservations/manager")
     suspend fun getReservations(): Response<ServiceResponse<List<ReservationDto>>>
 
     @PATCH("/api/reservations/change/{reservation_id}")
