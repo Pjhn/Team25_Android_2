@@ -3,8 +3,8 @@ package com.kakaotech.team25M.data.network.dto.mapper
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
 import com.kakaotech.team25M.domain.model.AccompanyInfo
 
-object AccompanyMapper {
-    fun asDomain(dto: List<AccompanyDto>): List<AccompanyInfo> {
+object AccompanyMapper: DomainMapper<List<AccompanyInfo>, List<AccompanyDto>> {
+    override fun asDomain(dto: List<AccompanyDto>): List<AccompanyInfo> {
         return dto.map { accompanyDto ->
             AccompanyInfo(
                 status = accompanyDto.status,
@@ -14,7 +14,7 @@ object AccompanyMapper {
         }
     }
 
-    fun asDto(domain: List<AccompanyInfo>): List<AccompanyDto> {
+    override fun asDto(domain: List<AccompanyInfo>): List<AccompanyDto> {
         return domain.map { accompanyDomain ->
             AccompanyDto(
                 status = accompanyDomain.status,
