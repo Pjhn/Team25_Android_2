@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityReservationDetailsBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.domain.model.toKorean
@@ -37,12 +38,9 @@ class ReservationDetailsActivity : AppCompatActivity() {
     private fun collectReservationInfo() {
         lifecycleScope.launch {
             reservationDetailsViewModel.reservationInfo.collectLatest {reservationInfo ->
-                val dateFormat = SimpleDateFormat("yy.MM.dd a h시", Locale.KOREAN)
-
                 binding.locationDepartTextView.text = reservationInfo?.departureLocation
                 binding.locationArriveTextView.text = reservationInfo?.arrivalLocation
-                binding.companionDepartTimeInformationTextView.text =
-                    dateFormat.format(reservationInfo?.reservationDate)
+                binding.companionDepartTimeInformationTextView.text = DateFormatter.formatDate(reservationInfo?.reservationDate, outputFormat = SimpleDateFormat("yy.MM.dd a h시", Locale.KOREAN))
                 binding.transportationInformationTextView.text = reservationInfo?.transportation
                 binding.requestDetailsInformationTextView.text = "없음"
 

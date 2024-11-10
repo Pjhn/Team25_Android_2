@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ItemReservationStatusBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
 import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class ReservationStatusRecyclerViewAdapter(
     private val companionStartClickListener: OnCompanionStartClickListener,
@@ -30,13 +29,7 @@ class ReservationStatusRecyclerViewAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReservationInfo) {
-            val dateString = item.reservationDate
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
-            val outputFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
-
-            val date = inputFormat.parse(dateString)?.let { outputFormat.format(it) }
-
-            binding.reservationDateTextView.text = date
+            binding.reservationDateTextView.text = DateFormatter.formatDate(item.reservationDate)
             binding.userNameTextView.text = item.patient.patientName
 
             when (item.reservationStatus) {

@@ -6,11 +6,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.kakaotech.team25M.R
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityReservationRejectBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class ReservationRejectActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReservationRejectBinding
@@ -32,10 +31,8 @@ class ReservationRejectActivity : AppCompatActivity() {
         reservationInfo = intent.getParcelableExtra("ReservationInfo")
 
         reservationInfo?.let { reservationInfo ->
-            val dateFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
-
             binding.userNameTextView.text = reservationInfo.patient.patientName
-            binding.reservationDateTextView.text = dateFormat.format(reservationInfo.reservationDate)
+            binding.reservationDateTextView.text = DateFormatter.formatDate(reservationInfo.reservationDate)
         }
     }
 
