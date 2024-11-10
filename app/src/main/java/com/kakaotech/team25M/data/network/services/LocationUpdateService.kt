@@ -15,9 +15,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LocationUpdateService @Inject constructor(
-    private val locationUpdateLauncher: LocationUpdateLauncher
-) : Service() {
+class LocationUpdateService: Service() {
+    @Inject
+    lateinit var locationUpdateLauncher: LocationUpdateLauncher
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, createNotification())
         startLocationUpdate()
