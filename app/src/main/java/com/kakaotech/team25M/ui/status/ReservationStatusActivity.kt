@@ -96,6 +96,8 @@ class ReservationStatusActivity : AppCompatActivity() {
             startLocationService()
             reservationStatusViewModel.updateRunningReservationId(reservationId)
             reservationStatusViewModel.changeReservation(reservationId, 진행중)
+            reservationStatusViewModel.postStartedAccompanyInfo(reservationId)
+            setObserves()
         }.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
@@ -152,7 +154,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 reservationStatusViewModel.pendingReservations.collectLatest { reservations ->
-                    (binding.reservationApplyRecyclerView.adapter as? ReservationStatusRecyclerViewAdapter)
+                    (binding.reservationApplyRecyclerView.adapter as? ReservationApplyRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
             }
@@ -163,7 +165,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 reservationStatusViewModel.completedReservations.collectLatest { reservations ->
-                    (binding.companionCompleteHistoryRecyclerView.adapter as? ReservationStatusRecyclerViewAdapter)
+                    (binding.companionCompleteHistoryRecyclerView.adapter as? CompanionCompleteHistoryRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
             }
@@ -186,6 +188,7 @@ class ReservationStatusActivity : AppCompatActivity() {
 
                 stopLocationService()
                 reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 완료)
+                reservationStatusViewModel.postCompletedAccompanyInfo(reservationInfo.reservationId)
                 companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
             }
         }
