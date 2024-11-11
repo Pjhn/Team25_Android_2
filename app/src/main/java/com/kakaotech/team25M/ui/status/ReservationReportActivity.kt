@@ -23,6 +23,7 @@ class ReservationReportActivity : AppCompatActivity() {
 
         navigateToPrevious()
         setReservationInfo()
+        setClickListener()
     }
 
     private fun navigateToPrevious() {

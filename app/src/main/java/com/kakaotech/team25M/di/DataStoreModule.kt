@@ -18,16 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-
-    private const val DATA_STORE_FILE_NAME = "location_service"
-    @Provides
-    @Singleton
-    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
-            produceFile = {context.preferencesDataStoreFile(DATA_STORE_FILE_NAME)}
-        )
-    }
-
     private val Context.tokenDataStore: DataStore<Tokens> by dataStore(
         fileName = "tokens.pb",
         serializer = TokenSerializer

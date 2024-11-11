@@ -1,11 +1,9 @@
 package com.kakaotech.team25M.di
 
 import com.kakaotech.team25M.data.repository.DefaultAccompanyRepository
-import com.kakaotech.team25M.data.repository.DefaultCoordinatesRepository
 import com.kakaotech.team25M.data.repository.DefaultReportRepository
 import com.kakaotech.team25M.data.repository.DefaultReservationRepository
 import com.kakaotech.team25M.domain.repository.AccompanyRepository
-import com.kakaotech.team25M.domain.repository.CoordinatesRepository
 import com.kakaotech.team25M.domain.repository.ReportRepository
 import com.kakaotech.team25M.domain.repository.ReservationRepository
 import com.kakaotech.team25M.data.repository.DefaultManagerInformationRepository
@@ -41,10 +39,6 @@ abstract class ViewmodelModule {
     @Binds
     @ViewModelScoped
     abstract fun bindAccompanyRepository(defaultAccompanyRepository: DefaultAccompanyRepository): AccompanyRepository
-
-    @Binds
-    @ViewModelScoped
-    abstract fun bindCoordinatesRepository(defaultCoordinatesRepository: DefaultCoordinatesRepository): CoordinatesRepository
 
     @Binds
     @ViewModelScoped
