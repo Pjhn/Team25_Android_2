@@ -290,10 +290,8 @@ class ManagerInformationViewModel @Inject constructor(
     }
 
     fun patchTime(workTime: WorkTimeDomain) {
-        val patchTimeDto = workTime.toDto()
-
         viewModelScope.launch {
-            val result = patchTimeUseCase(patchTimeDto)
+            val result = patchTimeUseCase(workTime)
             _timePatched.value = if (result.isSuccess) {
                 PatchStatus.SUCCESS
             } else {
