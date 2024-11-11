@@ -1,6 +1,5 @@
 package com.kakaotech.team25M.ui.companion
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -11,22 +10,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
 import com.kakaotech.team25M.ui.status.CompanionCompleteDialog
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelManager
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
-import com.kakaotech.team25M.R
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
-import com.kakaotech.team25M.data.network.services.LocationUpdateService
 import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityLiveCompanionBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
