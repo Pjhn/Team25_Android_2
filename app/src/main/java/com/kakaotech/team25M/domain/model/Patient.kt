@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Patient (
     val patientName: String = "",
     val patientPhone: String = "",
-    val patientGender: Gender = Gender.MALE,
+    val patientGender: Gender? = Gender.MALE,
     val patientRelation: String = "",
     val patientBirth: String = "",
     val nokPhone: String = ""
