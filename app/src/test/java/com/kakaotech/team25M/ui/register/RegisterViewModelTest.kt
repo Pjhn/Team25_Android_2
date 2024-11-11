@@ -10,6 +10,7 @@ import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -75,5 +76,10 @@ class RegisterViewModelTest {
         every { Log.i(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 }
