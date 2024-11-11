@@ -90,6 +90,9 @@ dependencies {
     implementation(libs.aws.android.sdk.mobile.client)
     implementation(libs.aws.android.sdk.core)
     implementation(libs.auth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
 
 }
 
