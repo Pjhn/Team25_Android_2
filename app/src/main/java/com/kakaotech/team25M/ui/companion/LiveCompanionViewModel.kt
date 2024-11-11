@@ -7,6 +7,7 @@ import com.kakaotech.team25M.domain.model.ReservationStatus.진행중
 import com.kakaotech.team25M.domain.repository.AccompanyRepository
 import com.kakaotech.team25M.domain.repository.ReservationRepository
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
+import com.kakaotech.team25M.data.network.dto.ReservationStatusDto
 import com.kakaotech.team25M.domain.model.AccompanyInfo
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,7 +65,7 @@ class LiveCompanionViewModel @Inject constructor(
 
     fun changeReservation(reservationId: String, status: ReservationStatus) {
         viewModelScope.launch {
-            reservationRepository.changeReservation(reservationId,status)
+            reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
         }
     }
 
