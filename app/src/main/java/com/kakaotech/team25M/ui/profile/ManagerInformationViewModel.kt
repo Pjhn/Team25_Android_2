@@ -4,9 +4,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kakaotech.team25M.data.network.dto.PatchCommentDto
-import com.kakaotech.team25M.data.network.dto.PatchImageDto
-import com.kakaotech.team25M.data.network.dto.PatchLocationDto
 import com.kakaotech.team25M.data.network.dto.ProfileDto
 import com.kakaotech.team25M.domain.model.Gender
 import com.kakaotech.team25M.domain.model.ImageFolder
@@ -260,12 +257,8 @@ class ManagerInformationViewModel @Inject constructor(
     }
 
     private fun patchImage() {
-        val patchImageDto = PatchImageDto(
-            newProfileImage = _newProfileImageUrl.value
-        )
-
         viewModelScope.launch {
-            val result = patchImageUseCase(patchImageDto)
+            val result = patchImageUseCase(_newProfileImageUrl.value)
             _imagePatched.value = if (result.isSuccess) {
                 PatchStatus.SUCCESS
             } else {
@@ -275,12 +268,8 @@ class ManagerInformationViewModel @Inject constructor(
     }
 
     fun patchLocation(sido: String, sigungu: String) {
-        val patchLocationDto = PatchLocationDto(
-            newWorkingRegion = "$sido $sigungu"
-        )
-
         viewModelScope.launch {
-            val result = patchLocationUseCase(patchLocationDto)
+            val result = patchLocationUseCase(sido, sigungu)
             _locationPatched.value = if (result.isSuccess) {
                 PatchStatus.SUCCESS
             } else {
@@ -290,12 +279,8 @@ class ManagerInformationViewModel @Inject constructor(
     }
 
     fun patchComment(comment: String) {
-        val patchCommentDto = PatchCommentDto(
-            newComment = comment
-        )
-
         viewModelScope.launch {
-            val result = patchCommentUseCase(patchCommentDto)
+            val result = patchCommentUseCase(comment)
             _commentPatched.value = if (result.isSuccess) {
                 PatchStatus.SUCCESS
             } else {
@@ -305,10 +290,8 @@ class ManagerInformationViewModel @Inject constructor(
     }
 
     fun patchTime(workTime: WorkTimeDomain) {
-        val patchTimeDto = workTime.toDto()
-
         viewModelScope.launch {
-            val result = patchTimeUseCase(patchTimeDto)
+            val result = patchTimeUseCase(workTime)
             _timePatched.value = if (result.isSuccess) {
                 PatchStatus.SUCCESS
             } else {

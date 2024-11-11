@@ -18,14 +18,13 @@ android {
         applicationId = "com.kakaotech.team25M"
         minSdk = 27
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "KAKAO_API_KEY", getApiKey("KAKAO_API_KEY"))
-        buildConfigField("String", "S3_ACCESS_KEY", getApiKey("S3_ACCESS_KEY"))
-        buildConfigField("String", "S3_SECRET_KEY", getApiKey("S3_SECRET_KEY"))
+        buildConfigField("String", "S3_COGNITO_ID", getApiKey("S3_COGNITO_ID"))
         buildConfigField("String", "API_BASE_URL", getApiUrl("API_BASE_URL"))
         manifestPlaceholders["kakaoApiKey"] = getApiKey("KAKAO_API_KEY_NO_QUOTES")
     }
@@ -90,6 +89,10 @@ dependencies {
     implementation(libs.aws.android.sdk.s3)
     implementation(libs.aws.android.sdk.mobile.client)
     implementation(libs.aws.android.sdk.core)
+    implementation(libs.auth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
 
 }
 
