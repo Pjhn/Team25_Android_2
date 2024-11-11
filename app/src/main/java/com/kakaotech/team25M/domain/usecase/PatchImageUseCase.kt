@@ -8,7 +8,7 @@ import javax.inject.Inject
 class PatchImageUseCase @Inject constructor(
     private val managerInformationRepository: ManagerInformationRepository
 ) {
-    suspend operator fun invoke(patchImageDto: PatchImageDto): Result<String?> {
-        return managerInformationRepository.patchImage(patchImageDto)
+    suspend operator fun invoke(newProfileImageUrl: String): Result<String?> {
+        return managerInformationRepository.patchImage(PatchImageDto(newProfileImageUrl))
     }
 }
