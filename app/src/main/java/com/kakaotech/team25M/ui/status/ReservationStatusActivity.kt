@@ -16,16 +16,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
-import com.kakaotech.team25M.data.network.services.LocationUpdateService
 import com.kakaotech.team25M.domain.model.ReservationInfo
-import com.kakaotech.team25M.ui.status.utils.RequestPermission.isPermissionSetGranted
 import com.kakaotech.team25M.ui.status.adapter.CompanionCompleteHistoryRecyclerViewAdapter
 import com.kakaotech.team25M.ui.status.adapter.ReservationApplyRecyclerViewAdapter
 import com.kakaotech.team25M.ui.status.adapter.ReservationStatusRecyclerViewAdapter
 import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnReservationApplyClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import com.kakaotech.team25M.ui.status.utils.RequestPermission
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -52,85 +49,6 @@ class ReservationStatusActivity : AppCompatActivity() {
         setReservationApplyRecyclerViewAdapter()
         setCompanionCompleteHistoryRecyclerViewAdapter()
         setObserves()
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val isGranted = permissions.entries.all { it.value }
-        if (isGranted) {
-            showNotificationPermissionDialog()
-        } else {
-            Toast.makeText(this, "위치 권한을 설정하세요. 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    /**
-     *  위치 권한이 허용 되어 있을 때 백그라운드 위치 권한 요청 가능
-     */
-    private val requestBackgroundLocationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Toast.makeText(this, "권한이 설정 되었습니다.\n동행 시작 버튼을 눌러 서비스를 시작해 주세요.", Toast.LENGTH_LONG)
-                .show()
-        } else {
-            Toast.makeText(this, "백그라운드 위치 권한을 허용해주세요. 설정에서 변경 가능합니다.", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun checkLocationSettingsAndStartService(reservationId: String) {
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            5000L
-        ).build()
-
-        val locationSettingRequest = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-            .build()
-
-        val settingClient = LocationServices.getSettingsClient(this)
-        val task = settingClient.checkLocationSettings(locationSettingRequest)
-
-        task.addOnSuccessListener {
-            startLocationService()
-            reservationStatusViewModel.updateRunningReservationId(reservationId)
-            reservationStatusViewModel.changeReservation(reservationId, 진행중)
-            reservationStatusViewModel.postStartedAccompanyInfo(reservationId)
-            setObserves()
-        }.addOnFailureListener { exception ->
-            if (exception is ResolvableApiException) {
-                try {
-                    exception.startResolutionForResult(this, REQUEST_CHECK_SETTINGS)
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e(
-                        "ReservationStatusActivity", "${e.message}"
-                    )
-                }
-            }
-        }
-    }
-
-    private fun startLocationService() {
-        val intent =
-            Intent(this@ReservationStatusActivity, LocationUpdateService::class.java)
-        this@ReservationStatusActivity.startForegroundService(intent)
-    }
-
-    private fun stopLocationService() {
-        val intent = Intent(this, LocationUpdateService::class.java)
-        this.stopService(intent)
-    }
-
-    private fun requestRequiredPermission() {
-        val permissions = RequestPermission.getRequiredPermissions()
-        requestPermissionLauncher.launch(permissions)
-    }
-
-    private fun requestBackgroundLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            requestBackgroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        }
     }
 
     private fun setObserves() {
@@ -175,18 +93,14 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun setReservationStatusRecyclerViewAdapter() {
         val companionStartClickListener = object : OnCompanionStartClickListener {
             override fun onStartClicked(reservationInfo: ReservationInfo) {
-                if (isPermissionSetGranted(this@ReservationStatusActivity)) {
-                    checkLocationSettingsAndStartService(reservationInfo.reservationId)
-                } else {
-                    requestRequiredPermission()
-                }
+                reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 진행중)
+                reservationStatusViewModel.postStartedAccompanyInfo(reservationInfo.reservationId)
             }
 
             override fun onCompleteClicked(reservationInfo: ReservationInfo) {
                 val companionCompleteDialog =
                     CompanionCompleteDialog.newInstance(reservationInfo)
 
-                stopLocationService()
                 reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 완료)
                 reservationStatusViewModel.postCompletedAccompanyInfo(reservationInfo.reservationId)
                 companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
@@ -260,29 +174,9 @@ class ReservationStatusActivity : AppCompatActivity() {
         binding.reservationApplyRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun showNotificationPermissionDialog() {
-        AlertDialog.Builder(this).apply {
-            setTitle("백그라운드 권한 설정")
-            setMessage(
-                String.format(
-                    "백그라운드 설정을 \"항상 허용\"으로 설정해 주세요."
-                )
-            )
-            setPositiveButton("설정하기") { _, _ ->
-                requestBackgroundLocationPermission()
-            }
-            setNegativeButton("취소하기") { _, _ -> }
-            show()
-        }
-    }
-
     private fun navigateToPrevious() {
         binding.backBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-    }
-
-    companion object {
-        const val REQUEST_CHECK_SETTINGS = 100
     }
 }

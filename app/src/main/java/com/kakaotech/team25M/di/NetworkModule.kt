@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import com.kakaotech.team25M.BuildConfig
 import com.kakaotech.team25M.TokensProto.Tokens
 import com.kakaotech.team25M.data.network.services.AccompanyService
-import com.kakaotech.team25M.data.network.services.CoordinatesService
 import com.kakaotech.team25M.data.network.services.ReportService
 import com.kakaotech.team25M.data.network.services.ReservationService
 import com.kakaotech.team25M.data.network.authenticator.HttpAuthenticator
@@ -83,12 +82,6 @@ object NetworkModule {
     @Singleton
     fun provideAccompanyService(@GeneralRetrofit retrofit: Retrofit): AccompanyService {
         return retrofit.create(AccompanyService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCoordinatesService(@GeneralRetrofit retrofit: Retrofit): CoordinatesService {
-        return retrofit.create(CoordinatesService::class.java)
     }
 
     @Provides
