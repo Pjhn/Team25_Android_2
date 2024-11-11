@@ -3,19 +3,13 @@ package com.kakaotech.team25M.ui.status
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
-import com.kakaotech.team25M.domain.model.Gender
-import com.kakaotech.team25M.domain.model.Patient
-import com.kakaotech.team25M.domain.model.ReservationInfo
+import com.kakaotech.team25M.data.network.dto.ReservationStatusDto
 import com.kakaotech.team25M.domain.model.ReservationStatus
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
 import com.kakaotech.team25M.domain.repository.AccompanyRepository
 import com.kakaotech.team25M.domain.repository.ReservationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -54,7 +48,7 @@ class ReservationStatusViewModel @Inject constructor(
 
     fun changeReservation(reservationId: String, status: ReservationStatus) {
         viewModelScope.launch {
-            reservationRepository.changeReservation(reservationId, status)
+            reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
         }
     }
 

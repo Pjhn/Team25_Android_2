@@ -10,7 +10,9 @@ import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityReservationRejectBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.domain.model.ReservationStatus.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ReservationRejectActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReservationRejectBinding
     private var reservationInfo: ReservationInfo? = null
