@@ -345,5 +345,8 @@
     <string name="change_profile_image">프로필 이미지 변경</string>
     <string name="do_change">변경하기</string>
     <string name="input_sigungu">시/군/구를 입력하세요</string>
+    <string name="agree_personal_infor">(필수) 개인정보 수집 및 이용 동의</string>
+    <string name="see_privacy_detail">자세히</string>
+    <string name="agree_personal_infor_third">(필수) 개인정보 제3자 제공 동의</string>
 
 </resources>
