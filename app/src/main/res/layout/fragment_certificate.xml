@@ -182,6 +182,51 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <CheckBox
+        android:id="@+id/privacy_agreement_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/agree_personal_infor"
+        app:layout_constraintBottom_toTopOf="@id/third_party_agreement_checkbox"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/details_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:text="@string/see_privacy_detail"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@id/privacy_agreement_checkbox"
+        app:layout_constraintTop_toTopOf="@id/privacy_agreement_checkbox"
+        app:layout_constraintStart_toStartOf="@id/third_details_button"
+        app:layout_constraintEnd_toEndOf="@id/third_details_button"/>
+
+    <CheckBox
+        android:id="@+id/third_party_agreement_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/agree_personal_infor_third"
+        app:layout_constraintBottom_toTopOf="@id/register_finish_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/third_details_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:focusable="true"
+        android:text="@string/see_privacy_detail"
+        android:textColor="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@id/third_party_agreement_checkbox"
+        app:layout_constraintTop_toTopOf="@id/third_party_agreement_checkbox"
+        app:layout_constraintStart_toEndOf="@id/third_party_agreement_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <TextView
         android:id="@+id/register_finish_btn"
         android:layout_width="match_parent"

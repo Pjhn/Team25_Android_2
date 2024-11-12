@@ -16,19 +16,23 @@ class DefaultReservationRepository @Inject constructor(
     override fun getReservationsFlow(): Flow<List<ReservationInfo>> = flow {
         val response = reservationService.getReservations()
         if (response.isSuccessful) {
-            Log.d("ReservationRepository", "${response.body()}")
+            Log.d(TAG, "${response.body()}")
 
             val responseData = response.body()?.data
             val reservations = responseData.asDomain()
 
             emit(reservations)
-        } else Log.e("ReservationRepository", "${response.code()}")
+        } else Log.e(TAG, "${response.code()}")
     }
 
     override suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto) {
         val response = reservationService.changeReservation(reservationId, reservationStatusDto)
         if (response.isSuccessful) {
-            Log.d("AccompanyRepository", "${response.body()}")
-        } else Log.e("AccompanyRepository", "${response.code()}")
+            Log.d(TAG, "${response.body()}")
+        } else Log.e(TAG, response.toString())
+    }
+
+    companion object {
+        private const val TAG = "ReservationRepository"
     }
 }
