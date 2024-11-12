@@ -1,15 +1,8 @@
 package com.kakaotech.team25M.ui.status
 
-import android.Manifest
 import android.content.Intent
-import android.content.IntentSender
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,11 +16,6 @@ import com.kakaotech.team25M.ui.status.adapter.ReservationStatusRecyclerViewAdap
 import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnReservationApplyClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.Priority
 import com.kakaotech.team25M.databinding.ActivityReservationStatusBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -51,10 +39,28 @@ class ReservationStatusActivity : AppCompatActivity() {
         setObserves()
     }
 
+    override fun onStart() {
+        super.onStart()
+        reservationStatusViewModel.updateReservations()
+    }
+
     private fun setObserves() {
         collectConfirmedOrRunningReservations()
         collectPendingReservations()
         collectCompletedReservations()
+        collectReservations()
+    }
+
+    private fun collectReservations() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                reservationStatusViewModel.reservations.collectLatest { reservations ->
+                    reservationStatusViewModel.updateConfirmedOrRunningReservations(reservations)
+                    reservationStatusViewModel.updatePendingReservations(reservations)
+                    reservationStatusViewModel.updateCompletedReservations(reservations)
+                }
+            }
+        }
     }
 
     private fun collectConfirmedOrRunningReservations() {
@@ -94,7 +100,6 @@ class ReservationStatusActivity : AppCompatActivity() {
         val companionStartClickListener = object : OnCompanionStartClickListener {
             override fun onStartClicked(reservationInfo: ReservationInfo) {
                 reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 진행중)
-                reservationStatusViewModel.postStartedAccompanyInfo(reservationInfo.reservationId)
             }
 
             override fun onCompleteClicked(reservationInfo: ReservationInfo) {
@@ -102,7 +107,6 @@ class ReservationStatusActivity : AppCompatActivity() {
                     CompanionCompleteDialog.newInstance(reservationInfo)
 
                 reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 완료)
-                reservationStatusViewModel.postCompletedAccompanyInfo(reservationInfo.reservationId)
                 companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
             }
         }
@@ -145,7 +149,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         val onReservationApplyClickListener = object : OnReservationApplyClickListener {
             override fun onAcceptClicked(item: ReservationInfo) {
                 reservationStatusViewModel.changeReservation(item.reservationId, 확정)
-                setObserves()
+                reservationStatusViewModel.updateReservations()
             }
 
             override fun onRefuseClicked(item: ReservationInfo) {
