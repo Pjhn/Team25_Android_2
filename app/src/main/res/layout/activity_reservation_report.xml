@@ -144,18 +144,6 @@
         app:layout_constraintStart_toStartOf="@id/meal_before_btn"
         app:layout_constraintTop_toBottomOf="@id/meal_before_btn" />
 
-    <TextView
-        android:id="@+id/time_1hour_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="14dp"
-        android:background="@drawable/light_purple_btn_box"
-        android:paddingHorizontal="24dp"
-        android:paddingVertical="10dp"
-        android:text="@string/hour"
-        android:textColor="@color/purple"
-        app:layout_constraintStart_toEndOf="@id/time_30min_btn"
-        app:layout_constraintTop_toTopOf="@id/time_30min_btn" />
 
     <TextView
         android:id="@+id/morning_btn"

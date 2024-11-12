@@ -1,6 +1,10 @@
 package com.kakaotech.team25M.ui.status
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -8,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kakaotech.team25M.R
 import com.kakaotech.team25M.databinding.ActivityReservationReportBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
+import com.kakaotech.team25M.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ReservationReportActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReservationReportBinding
     private var reservationInfo: ReservationInfo? = null
@@ -41,6 +47,9 @@ class ReservationReportActivity : AppCompatActivity() {
     }
 
     private fun setClickListener() {
+        setSummaryEditTextListener()
+        setFrequencyEditTextListener()
+
         binding.mealBeforeBtn.setOnClickListener {
             updateMealTimeSelection(true)
         }
@@ -50,9 +59,6 @@ class ReservationReportActivity : AppCompatActivity() {
 
         binding.time30minBtn.setOnClickListener {
             updateTimeSelection(true)
-        }
-        binding.time1hourBtn.setOnClickListener {
-            updateTimeSelection(false)
         }
 
         binding.morningBtn.setOnClickListener {
@@ -65,13 +71,49 @@ class ReservationReportActivity : AppCompatActivity() {
             toggleTimeOfDaySelection(binding.dinnerBtn, "저녁")
         }
 
+        binding.summaryEditTextView.setOnClickListener {  }
+
         binding.submitReportBtn.setOnClickListener {
+            Log.d("ReservationReportActivity", reservationReportViewModel.reportDto.value.toString())
             if(isReportInfoValid()){
-                reservationReportViewModel.updateDoctorSummary(binding.summaryEditTextView.text.toString())
-                reservationReportViewModel.updateFrequency(binding.frequencyEditTextView.text.toString().toInt())
-                reservationReportViewModel.postReport(reservationId, reservationReportViewModel.reportDto.value)
+                reservationReportViewModel
+                    .postReport(reservationId, reservationReportViewModel.reportDto.value)
+
+                Toast.makeText(this@ReservationReportActivity, "성공적으로 작성 완료 되었습니다", Toast.LENGTH_SHORT).show()
+
+                val intent =
+                    Intent(this@ReservationReportActivity, MainActivity::class.java)
+                startActivity(intent)
             }
         }
+    }
+
+    private fun setSummaryEditTextListener() {
+        binding.summaryEditTextView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val summary = s.toString()
+                reservationReportViewModel.updateDoctorSummary(summary)
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val summary = s.toString()
+                reservationReportViewModel.updateDoctorSummary(summary)
+            }
+        })
+    }
+
+    private fun setFrequencyEditTextListener() {
+        binding.frequencyEditTextView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val frequencyText = s.toString()
+                val frequency = frequencyText.toIntOrNull()
+                reservationReportViewModel.updateFrequency(frequency?: 0)
+            }
+        })
     }
 
     private var isMealBeforeSelected = true
@@ -91,10 +133,6 @@ class ReservationReportActivity : AppCompatActivity() {
         isTime30MinSelected = is30Min
         if (is30Min) {
             binding.time30minBtn.setBackgroundResource(R.drawable.purple_btn_box)
-            binding.time1hourBtn.setBackgroundResource(R.drawable.light_purple_btn_box)
-        } else {
-            binding.time30minBtn.setBackgroundResource(R.drawable.light_purple_btn_box)
-            binding.time1hourBtn.setBackgroundResource(R.drawable.purple_btn_box)
         }
         updateMedicineTime()
     }
