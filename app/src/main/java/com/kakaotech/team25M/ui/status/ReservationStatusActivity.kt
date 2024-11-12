@@ -130,7 +130,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         val onShowDetailsClickListener = object : OnShowDetailsClickListener {
             override fun onDetailsClicked(item: ReservationInfo) {
                 val intent =
-                    Intent(this@ReservationStatusActivity, ReservationDetailsActivity::class.java)
+                    Intent(this@ReservationStatusActivity, ReservationReportActivity::class.java)
                         .putExtra("ReservationInfo", item)
                 startActivity(intent)
             }

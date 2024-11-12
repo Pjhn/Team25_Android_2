@@ -12,7 +12,7 @@ class DefaultReportRepository @Inject constructor(
     override suspend fun postReport(reservationId: String, reportDto: ReportDto) {
         val response = reportService.postReportInfo(reservationId, reportDto)
         if (response.isSuccessful) {
-            Log.d("AccompanyRepository", "${response.body()}")
-        } else Log.e("AccompanyRepository", "${response.code()}")
+            Log.d("ReportRepository", "${response.body()}")
+        } else Log.e("ReportRepository", "${response.code()} ${response.message()}")
     }
 }

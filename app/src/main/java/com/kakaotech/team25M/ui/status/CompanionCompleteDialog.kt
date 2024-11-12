@@ -1,10 +1,12 @@
 package com.kakaotech.team25M.ui.status
 
 import android.app.Dialog
+import android.content.Intent
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -63,7 +65,16 @@ class CompanionCompleteDialog :
         }
 
         binding.navigateToReportWriteBtn.setOnClickListener {
-            Toast.makeText(requireContext(), "리포트 작성 화면으로 이동", Toast.LENGTH_SHORT).show()
+            val reservationInfo = arguments?.getParcelable<ReservationInfo>(RESERVATION_INFO)
+            if (reservationInfo != null) {
+                Log.d("CompanionCompleteDialog", "ReservationInfo: $reservationInfo")
+                val intent = Intent(requireContext(), ReservationReportActivity::class.java).apply {
+                    putExtra("ReservationInfo", reservationInfo)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(requireContext(), "Reservation info not available", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

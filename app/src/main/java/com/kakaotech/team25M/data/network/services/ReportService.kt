@@ -8,7 +8,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ReportService {
-    @POST("/api/reports/{reservation_id}")
+    @POST("/api/manager/reports/{reservation_id}")
     suspend fun postReportInfo(
         @Path("reservation_id") reservationId: String,
         @Body reportDto: ReportDto

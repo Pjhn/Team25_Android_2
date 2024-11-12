@@ -2,6 +2,7 @@ package com.kakaotech.team25M.ui.companion
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -17,6 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -38,7 +41,7 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setupObserves() {
         collectRunningReservation()
-        collectAccompanyInfoList()
+        collectAccompanyInfo()
     }
 
     private fun collectRunningReservation() {
@@ -46,28 +49,35 @@ class LiveCompanionActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 liveCompanionViewModel.runningReservation.collectLatest { reservationInfo ->
                     if (reservationInfo == null) {
-                        binding.patientNameTextView.visibility = View.GONE
                         binding.managerStatusLayout.visibility = View.GONE
-                    } else binding.patientNameTextView.text = reservationInfo.patient.patientName
+                    } else {
+                        binding.patientNameTextView.text = reservationInfo.patient.patientName
+
+                        liveCompanionViewModel.updateAccompanyInfo(reservationInfo.reservationId)
+                        liveCompanionViewModel.reservationId = reservationInfo.reservationId
+                    }
                 }
             }
         }
     }
 
-    private fun collectAccompanyInfoList() {
+    private fun collectAccompanyInfo() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                liveCompanionViewModel.accompanyInfoList.collectLatest { accompanyInfoList ->
-                    val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
+                liveCompanionViewModel.accompanyInfo.collectLatest { accompanyInfoList ->
+                    if(accompanyInfoList.isNullOrEmpty()) binding.liveCompanionRecyclerView.visibility = View.GONE
+                    else {
+                        val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
 
-                    (binding.liveCompanionRecyclerView.adapter as? LiveCompanionRecyclerViewAdapter)?.submitList(
-                        accompanyInfoList.map {
-                            DateFormatter.formatDate(it.statusDate, outputFormat = dateFormat) +
-                                " " + it.statusDescribe
-                        }
-                    )
-                    binding.liveCompanionRecyclerView.visibility =
-                        if (accompanyInfoList.isEmpty()) View.GONE else View.VISIBLE
+                        binding.liveCompanionRecyclerView.visibility = View.VISIBLE
+
+                        (binding.liveCompanionRecyclerView.adapter as? LiveCompanionRecyclerViewAdapter)?.submitList(
+                            accompanyInfoList.map {
+                                DateFormatter.formatDate(it.statusDate, outputFormat = dateFormat) +
+                                    " " + it.statusDescribe
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -86,17 +96,21 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setCompanionStatusInputFormClickListener() {
         binding.companionStatusInputBtn.setOnClickListener {
-            val currentDate = getCurrentFormattedDateTime()
+            val currentDate = DateFormatter.formatDate(LocalDateTime.now(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             val statusDescribe = binding.companionStatusInputEditText.text.toString()
+            val runningId = liveCompanionViewModel.reservationId
 
-            liveCompanionViewModel.reservationId.value?.let { reservationId ->
-                liveCompanionViewModel.postAccompanyInfo(
-                    reservationId,
-                    AccompanyDto("병원 이동", statusDate = currentDate, statusDescribe = statusDescribe)
-                )
+            if(runningId.isNullOrEmpty()){
+                Toast.makeText(this,"진행 중인 예약이 조회되지 않습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            collectAccompanyInfoList()
+            liveCompanionViewModel.postAccompanyInfo(
+                runningId,
+                AccompanyDto("병원 이동", statusDate = currentDate, statusDescribe = statusDescribe)
+            )
+
+            liveCompanionViewModel.updateAccompanyInfo(runningId)
             binding.companionStatusInputEditText.text.clear()
         }
     }
@@ -104,7 +118,7 @@ class LiveCompanionActivity : AppCompatActivity() {
     private fun setCompanionCompleteBtnClickListener() {
         binding.completeCompanionBtn.setOnClickListener {
             val runningReservationInfo = liveCompanionViewModel.runningReservation.value
-            val runningReservationId = liveCompanionViewModel.reservationId.value
+            val runningReservationId = liveCompanionViewModel.reservationId
 
             if (runningReservationInfo != null && runningReservationId != null) {
                 val companionCompleteDialog =
@@ -114,13 +128,6 @@ class LiveCompanionActivity : AppCompatActivity() {
                 companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
             }
         }
-    }
-
-    private fun getCurrentFormattedDateTime(): String {
-        val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm:ss", Locale.KOREAN)
-
-        return dateFormat.format(currentTime)
     }
 
     private fun navigateToPrevious() {

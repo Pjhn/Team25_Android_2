@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -28,38 +29,23 @@ class LiveCompanionViewModel @Inject constructor(
     private val reservationRepository: ReservationRepository,
     private val accompanyRepository: AccompanyRepository
 ) : ViewModel() {
-    private val _reservationId = MutableStateFlow<String?>(null)
-    val reservationId: StateFlow<String?> = _reservationId
+    private val _runningReservation = MutableStateFlow<ReservationInfo?>(null)
+    val runningReservation: StateFlow<ReservationInfo?> = _runningReservation
 
-    val runningReservation = reservationRepository.getReservationsFlow()
-        .map { reservations ->
-            reservations.firstOrNull { it.reservationStatus == 진행중 }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = ReservationInfo()
-        )
+    private val _accompanyInfo = MutableStateFlow<List<AccompanyInfo>?>(null)
+    val accompanyInfo: StateFlow<List<AccompanyInfo>?> = _accompanyInfo
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val accompanyInfoList: StateFlow<List<AccompanyInfo>> = _reservationId
-        .flatMapLatest { reservationId ->
-            if (reservationId != null) {
-                accompanyRepository.getAccompanyFlow(reservationId)
-            }else emptyFlow()
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = emptyList()
-        )
-
+    var reservationId: String? = null
 
     init {
-       viewModelScope.launch {
-            runningReservation.collectLatest { reservation ->
-                _reservationId.value = reservation?.reservationId
-            }
+        getFilteredRunningReservation()
+    }
+
+    fun getFilteredRunningReservation() {
+        viewModelScope.launch {
+            _runningReservation.value =
+                reservationRepository.getReservationsFlow().firstOrNull()
+                    ?.firstOrNull { it.reservationStatus == 진행중 }
         }
     }
 
@@ -72,6 +58,12 @@ class LiveCompanionViewModel @Inject constructor(
     fun postAccompanyInfo(reservationId: String, accompanyDto: AccompanyDto) {
         viewModelScope.launch {
             accompanyRepository.postAccompanyInfo(reservationId, accompanyDto)
+        }
+    }
+
+    fun updateAccompanyInfo(reservationId: String) {
+        viewModelScope.launch {
+            _accompanyInfo.value = accompanyRepository.getAccompanyFlow(reservationId).firstOrNull()
         }
     }
 }
