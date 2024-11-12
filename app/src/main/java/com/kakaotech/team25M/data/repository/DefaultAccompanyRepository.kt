@@ -17,7 +17,7 @@ class DefaultAccompanyRepository @Inject constructor(
         val response = accompanyService.postAccompanyInfo(reservationId, accompanyDto)
         if (response.isSuccessful) {
             Log.d("AccompanyRepository", "${response.body()}")
-        } else Log.e("AccompanyRepository", "${response.code()}")
+        } else Log.e("AccompanyRepository", "${response.code()} ${response.message()}")
     }
 
     override fun getAccompanyFlow(reservationId: String): Flow<List<AccompanyInfo>> = flow {
