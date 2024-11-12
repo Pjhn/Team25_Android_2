@@ -58,6 +58,7 @@ class LiveCompanionViewModel @Inject constructor(
     fun postAccompanyInfo(reservationId: String, accompanyDto: AccompanyDto) {
         viewModelScope.launch {
             accompanyRepository.postAccompanyInfo(reservationId, accompanyDto)
+            updateAccompanyInfo(reservationId)
         }
     }
 

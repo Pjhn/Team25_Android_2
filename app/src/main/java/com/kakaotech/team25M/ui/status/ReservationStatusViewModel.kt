@@ -49,6 +49,7 @@ class ReservationStatusViewModel @Inject constructor(
                     완료 -> postCompletedAccompanyInfo(reservationId)
                     else -> {}
                 }
+                updateReservations()
             }
         }
     }
