@@ -45,8 +45,8 @@ class ReservationStatusViewModel @Inject constructor(
             val result = reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
             if (result.isSuccess) {
                 when (status) {
-                    확정 -> postStartedAccompanyInfo(reservationId)
-                    진행중 -> postCompletedAccompanyInfo(reservationId)
+                    진행중 -> postStartedAccompanyInfo(reservationId)
+                    완료 -> postCompletedAccompanyInfo(reservationId)
                     else -> {}
                 }
             }
