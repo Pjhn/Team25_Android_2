@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.kakaotech.team25M.databinding.ActivityMainBinding
-import com.kakaotech.team25M.domain.model.ReservationStatus
 import com.kakaotech.team25M.domain.model.ReservationStatus.완료
 import com.kakaotech.team25M.domain.model.ReservationStatus.진행중
 import com.kakaotech.team25M.ui.companion.LiveCompanionActivity
@@ -45,7 +44,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        loadReservations()
+    }
 
+    private fun loadReservations() {
+        mainViewModel.updateReservations()
     }
 
     private fun navigateToProfile() {
@@ -79,8 +82,12 @@ class MainActivity : AppCompatActivity() {
                         binding.reservationStatusTextView.text = "확인된 예약이 ${size} 건 있습니다"
 
                         val runningReservations = reservations.filter { it.reservationStatus == 진행중 }
-                        if(runningReservations.isNotEmpty())
+                        if (runningReservations.isNotEmpty()) {
                             binding.realTimeCompanionStatusTextView.text = "동행을 진행하고 있습니다"
+                        } else {
+                            binding.realTimeCompanionStatusTextView.text = "현재 동행중이 아닙니다."
+                        }
+
                     }
                 }
             }
