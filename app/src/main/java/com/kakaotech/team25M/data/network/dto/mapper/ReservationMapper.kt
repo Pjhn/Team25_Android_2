@@ -1,6 +1,7 @@
 package com.kakaotech.team25M.data.network.dto.mapper
 
 import com.kakaotech.team25M.data.network.dto.ReservationDto
+import com.kakaotech.team25M.domain.model.Gender
 import com.kakaotech.team25M.domain.model.Patient
 import com.kakaotech.team25M.domain.model.ReservationInfo
 
@@ -21,7 +22,10 @@ object ReservationMapper {
                     patientName = reservationDto.patient.name,
                     patientPhone = reservationDto.patient.phoneNumber,
                     patientBirth = reservationDto.patient.birthDate,
-                    patientGender = reservationDto.patient.patientGender,
+                    patientGender = when (reservationDto.patient.patientGender) {
+                        "남성" -> Gender.MALE
+                        else -> Gender.FEMALE
+                    },
                     nokPhone = reservationDto.patient.nokPhone
                 )
             )

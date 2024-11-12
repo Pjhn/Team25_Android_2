@@ -44,7 +44,7 @@ class ReservationDetailsActivity : AppCompatActivity() {
                 binding.transportationInformationTextView.text = reservationInfo?.transportation
                 binding.requestDetailsInformationTextView.text = "없음"
 
-                binding.userNameInformationTextView.text = reservationInfo?.patient?.patientPhone
+                binding.userNameInformationTextView.text = reservationInfo?.patient?.patientName
                 binding.userGenderInformationTextView.text = reservationInfo?.patient?.patientGender?.toKorean()
                 binding.userBirthInformationTextView.text = reservationInfo?.patient?.patientBirth.plus("-*******")
                 binding.userPhoneNumberInformationTextView.text = reservationInfo?.patient?.patientPhone

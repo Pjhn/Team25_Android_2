@@ -20,7 +20,7 @@ data class ReservationDto(
 data class Patient(
     @SerializedName("name") val name: String,
     @SerializedName("phoneNumber") val phoneNumber: String,
-    @SerializedName("patientGender") val patientGender: Gender?,
+    @SerializedName("patientGender") val patientGender: String,
     @SerializedName("patientRelation") val patientRelation: String,
     @SerializedName("birthDate") val birthDate: String,
     @SerializedName("nokPhone") val nokPhone: String
