@@ -9,8 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kakaotech.team25M.domain.model.ReservationStatus.*
-import com.kakaotech.team25M.ui.status.CompanionCompleteDialog
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
 import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityLiveCompanionBinding
@@ -91,7 +89,6 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setClickListener() {
         setCompanionStatusInputFormClickListener()
-        setCompanionCompleteBtnClickListener()
     }
 
     private fun setCompanionStatusInputFormClickListener() {
@@ -112,21 +109,6 @@ class LiveCompanionActivity : AppCompatActivity() {
 
             liveCompanionViewModel.updateAccompanyInfo(runningId)
             binding.companionStatusInputEditText.text.clear()
-        }
-    }
-
-    private fun setCompanionCompleteBtnClickListener() {
-        binding.completeCompanionBtn.setOnClickListener {
-            val runningReservationInfo = liveCompanionViewModel.runningReservation.value
-            val runningReservationId = liveCompanionViewModel.reservationId
-
-            if (runningReservationInfo != null && runningReservationId != null) {
-                val companionCompleteDialog =
-                    CompanionCompleteDialog.newInstance(runningReservationInfo)
-
-                liveCompanionViewModel.changeReservation(runningReservationId, 완료)
-                companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
-            }
         }
     }
 
