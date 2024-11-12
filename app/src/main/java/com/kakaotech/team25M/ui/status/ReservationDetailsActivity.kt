@@ -46,7 +46,7 @@ class ReservationDetailsActivity : AppCompatActivity() {
 
                 binding.userNameInformationTextView.text = reservationInfo?.patient?.patientName
                 binding.userGenderInformationTextView.text = reservationInfo?.patient?.patientGender?.toKorean()
-                binding.userBirthInformationTextView.text = reservationInfo?.patient?.patientBirth.plus("-*******")
+                binding.userBirthInformationTextView.text = reservationInfo?.patient?.patientBirth
                 binding.userPhoneNumberInformationTextView.text = reservationInfo?.patient?.patientPhone
             }
         }

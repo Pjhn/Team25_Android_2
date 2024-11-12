@@ -15,6 +15,7 @@ class DefaultAccompanyRepository @Inject constructor(
 ) : AccompanyRepository {
     override suspend fun postAccompanyInfo(reservationId: String, accompanyDto: AccompanyDto) {
         val response = accompanyService.postAccompanyInfo(reservationId, accompanyDto)
+        Log.d("testt", accompanyDto.toString())
         if (response.isSuccessful) {
             Log.d("AccompanyRepository", "${response.body()}")
         } else Log.e("AccompanyRepository", "${response.code()} ${response.message()}")

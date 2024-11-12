@@ -2,7 +2,10 @@ package com.kakaotech.team25M.ui.status
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,14 +20,26 @@ import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnReservationApplyClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
 import com.kakaotech.team25M.databinding.ActivityReservationStatusBinding
+import com.kakaotech.team25M.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ReservationStatusActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReservationStatusBinding
     private val reservationStatusViewModel: ReservationStatusViewModel by viewModels()
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val reservationId = result.data?.getStringExtra("reservationId")
+
+            if (reservationId != null) {
+                reservationStatusViewModel.changeReservation(reservationId, 완료)
+                navigateToMain()
+            } else {
+                Toast.makeText(this, "동행완료 처리 오류입니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +69,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.reservations.collectLatest { reservations ->
+                reservationStatusViewModel.reservations.collect { reservations ->
                     reservationStatusViewModel.updateConfirmedOrRunningReservations(reservations)
                     reservationStatusViewModel.updatePendingReservations(reservations)
                     reservationStatusViewModel.updateCompletedReservations(reservations)
@@ -66,7 +81,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectConfirmedOrRunningReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.confirmedOrRunningReservations.collectLatest { reservations ->
+                reservationStatusViewModel.confirmedOrRunningReservations.collect { reservations ->
                     (binding.reservationStatusRecyclerView.adapter as? ReservationStatusRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
@@ -77,7 +92,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectPendingReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.pendingReservations.collectLatest { reservations ->
+                reservationStatusViewModel.pendingReservations.collect { reservations ->
                     (binding.reservationApplyRecyclerView.adapter as? ReservationApplyRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
@@ -88,7 +103,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectCompletedReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.completedReservations.collectLatest { reservations ->
+                reservationStatusViewModel.completedReservations.collect { reservations ->
                     (binding.companionCompleteHistoryRecyclerView.adapter as? CompanionCompleteHistoryRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
@@ -99,15 +114,11 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun setReservationStatusRecyclerViewAdapter() {
         val companionStartClickListener = object : OnCompanionStartClickListener {
             override fun onStartClicked(reservationInfo: ReservationInfo) {
-                reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 진행중)
+                showStartDialog(reservationInfo.reservationId)
             }
 
             override fun onCompleteClicked(reservationInfo: ReservationInfo) {
-                val companionCompleteDialog =
-                    CompanionCompleteDialog.newInstance(reservationInfo)
-
-                reservationStatusViewModel.changeReservation(reservationInfo.reservationId, 완료)
-                companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
+                showEndDialog(reservationInfo)
             }
         }
 
@@ -134,7 +145,7 @@ class ReservationStatusActivity : AppCompatActivity() {
         val onShowDetailsClickListener = object : OnShowDetailsClickListener {
             override fun onDetailsClicked(item: ReservationInfo) {
                 val intent =
-                    Intent(this@ReservationStatusActivity, ReservationReportActivity::class.java)
+                    Intent(this@ReservationStatusActivity, ReservationDetailsActivity::class.java)
                         .putExtra("ReservationInfo", item)
                 startActivity(intent)
             }
@@ -148,8 +159,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun setReservationApplyRecyclerViewAdapter() {
         val onReservationApplyClickListener = object : OnReservationApplyClickListener {
             override fun onAcceptClicked(item: ReservationInfo) {
-                reservationStatusViewModel.changeReservation(item.reservationId, 확정)
-                reservationStatusViewModel.updateReservations()
+                showAcceptDialog(item.reservationId)
             }
 
             override fun onRefuseClicked(item: ReservationInfo) {
@@ -176,6 +186,62 @@ class ReservationStatusActivity : AppCompatActivity() {
 
         binding.reservationApplyRecyclerView.adapter = adapter
         binding.reservationApplyRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun showAcceptDialog(reservationId: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("예약 수락")
+        builder.setMessage("예약을 수락하시겠습니까?")
+        builder.setPositiveButton("확인") { _, _ ->
+            reservationStatusViewModel.changeReservation(reservationId, 확정)
+            reservationStatusViewModel.updateReservations()
+            navigateToMain()
+        }
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    private fun showStartDialog(reservationId: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("동행 시작")
+        builder.setMessage("동행을 시작하시겠습니까?")
+        builder.setPositiveButton("확인") { _, _ ->
+            reservationStatusViewModel.changeReservation(reservationId, 진행중)
+            navigateToMain()
+        }
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    private fun showEndDialog(reservationInfo: ReservationInfo) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("동행 완료")
+        builder.setMessage("동행을 완료하고 리포트를 작성하시겠습니까?")
+        builder.setPositiveButton("확인") { _, _ ->
+            navigateToWriteReport(reservationInfo)
+        }
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    private fun navigateToMain() {
+        val intent =
+            Intent(this@ReservationStatusActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun navigateToWriteReport(reservationInfo: ReservationInfo) {
+        val intent = Intent(this, ReservationReportActivity::class.java).apply {
+            putExtra("ReservationInfo", reservationInfo)
+        }
+        startForResult.launch(intent)
     }
 
     private fun navigateToPrevious() {

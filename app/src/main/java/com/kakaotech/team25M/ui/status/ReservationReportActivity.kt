@@ -81,9 +81,12 @@ class ReservationReportActivity : AppCompatActivity() {
 
                 Toast.makeText(this@ReservationReportActivity, "성공적으로 작성 완료 되었습니다", Toast.LENGTH_SHORT).show()
 
-                val intent =
-                    Intent(this@ReservationReportActivity, MainActivity::class.java)
-                startActivity(intent)
+                val resultIntent = Intent().apply {
+                    putExtra("reservationId", reservationId)
+                }
+
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
         }
     }
