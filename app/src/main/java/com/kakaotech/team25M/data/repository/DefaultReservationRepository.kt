@@ -25,11 +25,15 @@ class DefaultReservationRepository @Inject constructor(
         } else Log.e(TAG, "${response.code()}")
     }
 
-    override suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto) {
+    override suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto): Result<String> {
         val response = reservationService.changeReservation(reservationId, reservationStatusDto)
-        if (response.isSuccessful) {
+        return if (response.isSuccessful) {
             Log.d(TAG, "${response.body()}")
-        } else Log.e(TAG, response.toString())
+            Result.success("변경 성공")
+        } else {
+            Log.e(TAG, response.toString())
+            Result.failure(Exception("Invalid response"))
+        }
     }
 
     companion object {

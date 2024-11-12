@@ -84,6 +84,7 @@ class ReservationReportActivity : AppCompatActivity() {
                 val intent =
                     Intent(this@ReservationReportActivity, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             }
         }
     }

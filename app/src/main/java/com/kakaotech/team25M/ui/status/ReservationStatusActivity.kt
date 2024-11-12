@@ -54,7 +54,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.reservations.collectLatest { reservations ->
+                reservationStatusViewModel.reservations.collect { reservations ->
                     reservationStatusViewModel.updateConfirmedOrRunningReservations(reservations)
                     reservationStatusViewModel.updatePendingReservations(reservations)
                     reservationStatusViewModel.updateCompletedReservations(reservations)
@@ -66,7 +66,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectConfirmedOrRunningReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.confirmedOrRunningReservations.collectLatest { reservations ->
+                reservationStatusViewModel.confirmedOrRunningReservations.collect { reservations ->
                     (binding.reservationStatusRecyclerView.adapter as? ReservationStatusRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
@@ -77,7 +77,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectPendingReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.pendingReservations.collectLatest { reservations ->
+                reservationStatusViewModel.pendingReservations.collect { reservations ->
                     (binding.reservationApplyRecyclerView.adapter as? ReservationApplyRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }
@@ -88,7 +88,7 @@ class ReservationStatusActivity : AppCompatActivity() {
     private fun collectCompletedReservations() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                reservationStatusViewModel.completedReservations.collectLatest { reservations ->
+                reservationStatusViewModel.completedReservations.collect { reservations ->
                     (binding.companionCompleteHistoryRecyclerView.adapter as? CompanionCompleteHistoryRecyclerViewAdapter)
                         ?.submitList(reservations)
                 }

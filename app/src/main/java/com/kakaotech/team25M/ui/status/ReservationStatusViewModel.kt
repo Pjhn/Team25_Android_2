@@ -42,11 +42,13 @@ class ReservationStatusViewModel @Inject constructor(
 
     fun changeReservation(reservationId: String, status: ReservationStatus) {
         viewModelScope.launch {
-            reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
-            when(status){
-                확정-> postStartedAccompanyInfo(reservationId)
-                진행중-> postCompletedAccompanyInfo(reservationId)
-                else -> {}
+            val result = reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
+            if (result.isSuccess) {
+                when (status) {
+                    확정 -> postStartedAccompanyInfo(reservationId)
+                    진행중 -> postCompletedAccompanyInfo(reservationId)
+                    else -> {}
+                }
             }
         }
     }
@@ -69,7 +71,7 @@ class ReservationStatusViewModel @Inject constructor(
 
     fun postStartedAccompanyInfo(reservationId: String) {
         viewModelScope.launch {
-            val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             accompanyRepository.postAccompanyInfo(
                 reservationId,
                 AccompanyDto(status = "병원 이동", statusDate = currentDateTime, statusDescribe = "동행을 시작합니다.")
@@ -79,7 +81,7 @@ class ReservationStatusViewModel @Inject constructor(
 
     fun postCompletedAccompanyInfo(reservationId: String) {
         viewModelScope.launch {
-            val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val currentDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             accompanyRepository.postAccompanyInfo(
                 reservationId,
                 AccompanyDto(status = "귀가", statusDate = currentDateTime, statusDescribe = "동행을 완료하였습니다.")

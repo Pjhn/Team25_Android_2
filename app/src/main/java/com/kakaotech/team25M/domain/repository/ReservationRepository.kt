@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface ReservationRepository {
     fun getReservationsFlow(): Flow<List<ReservationInfo>>
 
-    suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto)
+    suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto): Result<String>
 }
