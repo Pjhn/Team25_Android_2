@@ -1,6 +1,7 @@
 package com.kakaotech.team25M.ui.companion
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -9,12 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kakaotech.team25M.domain.model.ReservationStatus.*
-import com.kakaotech.team25M.ui.status.CompanionCompleteDialog
 import com.kakaotech.team25M.data.network.dto.AccompanyDto
 import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityLiveCompanionBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -40,21 +40,22 @@ class LiveCompanionActivity : AppCompatActivity() {
     }
 
     private fun setupObserves() {
-        collectRunningReservation()
         collectAccompanyInfo()
+        collectRunningReservation()
     }
 
     private fun collectRunningReservation() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                liveCompanionViewModel.runningReservation.collectLatest { reservationInfo ->
-                    if (reservationInfo == null) {
-                        binding.managerStatusLayout.visibility = View.GONE
-                    } else {
+                liveCompanionViewModel.runningReservation.collect { reservationInfo ->
+                    if (reservationInfo != null) {
+                        binding.managerStatusLayout.visibility = View.VISIBLE
                         binding.patientNameTextView.text = reservationInfo.patient.patientName
 
                         liveCompanionViewModel.updateAccompanyInfo(reservationInfo.reservationId)
                         liveCompanionViewModel.reservationId = reservationInfo.reservationId
+
+                        this.cancel()
                     }
                 }
             }
@@ -64,8 +65,8 @@ class LiveCompanionActivity : AppCompatActivity() {
     private fun collectAccompanyInfo() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                liveCompanionViewModel.accompanyInfo.collectLatest { accompanyInfoList ->
-                    if(accompanyInfoList.isNullOrEmpty()) binding.liveCompanionRecyclerView.visibility = View.GONE
+                liveCompanionViewModel.accompanyInfo.collect { accompanyInfoList ->
+                    if (accompanyInfoList.isNullOrEmpty()) binding.liveCompanionRecyclerView.visibility = View.GONE
                     else {
                         val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
 
@@ -91,17 +92,23 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setClickListener() {
         setCompanionStatusInputFormClickListener()
-        setCompanionCompleteBtnClickListener()
     }
 
     private fun setCompanionStatusInputFormClickListener() {
         binding.companionStatusInputBtn.setOnClickListener {
-            val currentDate = DateFormatter.formatDate(LocalDateTime.now(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-            val statusDescribe = binding.companionStatusInputEditText.text.toString()
+            val statusDescribe = binding.companionStatusInputEditText.text.toString().trim()
+
+            if (statusDescribe.isEmpty()) {
+                Toast.makeText(this, "상태를 입력해 주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val currentDate =
+                DateFormatter.formatDate(LocalDateTime.now(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             val runningId = liveCompanionViewModel.reservationId
 
-            if(runningId.isNullOrEmpty()){
-                Toast.makeText(this,"진행 중인 예약이 조회되지 않습니다", Toast.LENGTH_SHORT).show()
+            if (runningId.isNullOrEmpty()) {
+                Toast.makeText(this, "진행 중인 예약이 조회되지 않습니다", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -110,23 +117,7 @@ class LiveCompanionActivity : AppCompatActivity() {
                 AccompanyDto("병원 이동", statusDate = currentDate, statusDescribe = statusDescribe)
             )
 
-            liveCompanionViewModel.updateAccompanyInfo(runningId)
             binding.companionStatusInputEditText.text.clear()
-        }
-    }
-
-    private fun setCompanionCompleteBtnClickListener() {
-        binding.completeCompanionBtn.setOnClickListener {
-            val runningReservationInfo = liveCompanionViewModel.runningReservation.value
-            val runningReservationId = liveCompanionViewModel.reservationId
-
-            if (runningReservationInfo != null && runningReservationId != null) {
-                val companionCompleteDialog =
-                    CompanionCompleteDialog.newInstance(runningReservationInfo)
-
-                liveCompanionViewModel.changeReservation(runningReservationId, 완료)
-                companionCompleteDialog.show(supportFragmentManager, "CompanionCompleteDialog")
-            }
         }
     }
 

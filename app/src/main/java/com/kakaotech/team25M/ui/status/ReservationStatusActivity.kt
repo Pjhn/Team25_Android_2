@@ -20,7 +20,6 @@ import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnReservationApplyClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
 import com.kakaotech.team25M.databinding.ActivityReservationStatusBinding
-import com.kakaotech.team25M.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -34,7 +33,6 @@ class ReservationStatusActivity : AppCompatActivity() {
 
             if (reservationId != null) {
                 reservationStatusViewModel.changeReservation(reservationId, 완료)
-                navigateToMain()
             } else {
                 Toast.makeText(this, "동행완료 처리 오류입니다.", Toast.LENGTH_SHORT).show()
             }
@@ -194,8 +192,6 @@ class ReservationStatusActivity : AppCompatActivity() {
         builder.setMessage("예약을 수락하시겠습니까?")
         builder.setPositiveButton("확인") { _, _ ->
             reservationStatusViewModel.changeReservation(reservationId, 확정)
-            reservationStatusViewModel.updateReservations()
-            navigateToMain()
         }
         builder.setNegativeButton("취소") { dialog, _ ->
             dialog.dismiss()
@@ -209,7 +205,6 @@ class ReservationStatusActivity : AppCompatActivity() {
         builder.setMessage("동행을 시작하시겠습니까?")
         builder.setPositiveButton("확인") { _, _ ->
             reservationStatusViewModel.changeReservation(reservationId, 진행중)
-            navigateToMain()
         }
         builder.setNegativeButton("취소") { dialog, _ ->
             dialog.dismiss()
@@ -228,13 +223,6 @@ class ReservationStatusActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         builder.show()
-    }
-
-    private fun navigateToMain() {
-        val intent =
-            Intent(this@ReservationStatusActivity, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     private fun navigateToWriteReport(reservationInfo: ReservationInfo) {
