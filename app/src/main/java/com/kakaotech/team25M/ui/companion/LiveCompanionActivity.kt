@@ -49,6 +49,7 @@ class LiveCompanionActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 liveCompanionViewModel.runningReservation.collect { reservationInfo ->
                     if (reservationInfo != null) {
+                        binding.notCompanionTextView.visibility = View.GONE
                         binding.managerStatusLayout.visibility = View.VISIBLE
                         binding.patientNameTextView.text = reservationInfo.patient.patientName
 
