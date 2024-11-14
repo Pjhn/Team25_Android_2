@@ -348,5 +348,13 @@
     <string name="agree_personal_infor">(필수) 개인정보 수집 및 이용 동의</string>
     <string name="see_privacy_detail">자세히</string>
     <string name="agree_personal_infor_third">(필수) 개인정보 제3자 제공 동의</string>
+    <string name="companion_send">실시간 동행 정보 전송</string>
+    <string name="wirte_report">리포트 작성</string>
+    <string name="opinion_summary">의사소견 요약</string>
+    <string name="please_detail">진료 내용을 상세히 작성해주세요\n(50자 이내)</string>
+    <string name="how_to_take_medicine">약 복용 방법</string>
+    <string name="everyday_02">매일</string>
+    <string name="times_02">회</string>
+    <string name="complete_write_report_02">리포트 작성 완료하기</string>
 
 </resources>
