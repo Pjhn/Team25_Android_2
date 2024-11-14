@@ -22,7 +22,10 @@ class DefaultReservationRepository @Inject constructor(
             val reservations = responseData.asDomain()
 
             emit(reservations)
-        } else Log.e(TAG, "${response.code()}")
+        } else {
+            emit(listOf())
+            Log.e(TAG, "${response.code()}")
+        }
     }
 
     override suspend fun changeReservation(reservationId: String, reservationStatusDto: ReservationStatusDto): Result<String> {

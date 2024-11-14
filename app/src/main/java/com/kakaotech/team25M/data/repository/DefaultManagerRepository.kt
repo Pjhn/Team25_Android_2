@@ -24,7 +24,7 @@ class DefaultManagerRepository @Inject constructor(
                     Result.failure(Exception("Invalid response"))
                 }
             } else {
-                Log.e(TAG, "Registration failed with status code: ${response.code()}")
+                Log.e(TAG, "Registration failed with status code: ${response.toString()}")
                 Result.failure(Exception("Registration failed"))
             }
         } catch (e: Exception) {
