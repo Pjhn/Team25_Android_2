@@ -13,6 +13,6 @@ class DefaultReportRepository @Inject constructor(
         val response = reportService.postReportInfo(reservationId, reportDto)
         if (response.isSuccessful) {
             Log.d("ReportRepository", "${response.body()}")
-        } else Log.e("ReportRepository", "${response.code()} ${response.message()}")
+        } else Log.e("ReportRepository", "${response.code()}")
     }
 }
