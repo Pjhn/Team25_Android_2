@@ -84,8 +84,10 @@ class MainActivity : AppCompatActivity() {
                         val runningReservations = reservations.filter { it.reservationStatus == 진행중 }
                         if (runningReservations.isNotEmpty()) {
                             binding.realTimeCompanionStatusTextView.text = "동행을 진행하고 있습니다"
+                            binding.withdrawTextView.tag = false
                         } else {
                             binding.realTimeCompanionStatusTextView.text = "현재 동행중이 아닙니다."
+                            binding.withdrawTextView.tag = true
                         }
 
                     }
@@ -145,18 +147,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun setWithdrawClickListener() {
         binding.withdrawTextView.setOnClickListener {
-            val dialogBuilder = AlertDialog.Builder(this)
-                .setTitle("회원 탈퇴")
-                .setMessage("정말로 회원 탈퇴를 하시겠습니까?")
-                .setPositiveButton("확인") { _, _ ->
-                    mainViewModel.withdraw()
-                }
-                .setNegativeButton("취소") { dialog, _ ->
-                    dialog.dismiss()
-                }
+            val isEnabled = binding.withdrawTextView.tag as? Boolean ?: true
+            if (isEnabled) {
+                val dialogBuilder = AlertDialog.Builder(this)
+                    .setTitle("회원 탈퇴")
+                    .setMessage("정말로 회원 탈퇴를 하시겠습니까?")
+                    .setPositiveButton("확인") { _, _ ->
+                        mainViewModel.withdraw()
+                    }
+                    .setNegativeButton("취소") { dialog, _ ->
+                        dialog.dismiss()
+                    }
 
-            dialogBuilder.show()
-
+                dialogBuilder.show()
+            } else {
+                Toast.makeText(this, "진행중인 동행을 완료해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

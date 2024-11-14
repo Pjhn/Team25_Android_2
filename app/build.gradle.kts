@@ -18,8 +18,8 @@ android {
         applicationId = "com.kakaotech.team25M"
         minSdk = 27
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.1.5"
+        versionCode = 9
+        versionName = "1.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -93,7 +93,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
-
 }
 
 protobuf {
@@ -112,5 +111,5 @@ protobuf {
 }
 
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key, "")
-fun getApiUrl(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key, "")
 
+fun getApiUrl(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key, "")

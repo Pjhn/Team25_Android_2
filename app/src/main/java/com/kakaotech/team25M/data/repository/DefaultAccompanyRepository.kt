@@ -26,6 +26,8 @@ class DefaultAccompanyRepository @Inject constructor(
         if (response.isSuccessful) {
             val accompanyLogs = response.body()?.data.asDomain()
             emit(accompanyLogs)
+        } else {
+            emit(listOf())
         }
     }
 }
