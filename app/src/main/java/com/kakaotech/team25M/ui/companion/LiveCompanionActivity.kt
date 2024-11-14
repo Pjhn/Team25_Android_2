@@ -1,35 +1,30 @@
 package com.kakaotech.team25M.ui.companion
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kakaotech.team25M.R
+import com.kakaotech.team25M.data.network.dto.AccompanyDto
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ActivityLiveCompanionBinding
-import com.kakaotech.team25M.domain.model.Coordinates
-import com.kakaotech.team25M.ui.status.CompanionCompleteDialog
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelManager
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
-import kotlinx.coroutines.CompletableDeferred
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@AndroidEntryPoint
 class LiveCompanionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLiveCompanionBinding
-    private val kakaoMapDeferred = CompletableDeferred<KakaoMap>()
     private val liveCompanionViewModel: LiveCompanionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,112 +33,56 @@ class LiveCompanionActivity : AppCompatActivity() {
         binding = ActivityLiveCompanionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        startMapView()
         setupObserves()
         setLiveCompanionRecyclerViewAdapter()
         setClickListener()
         navigateToPrevious()
     }
 
-    private fun startMapView() {
-        binding.mapView.start(
-            createMapLifeCycleCallback(),
-            createMapReadyCallback(),
-        )
-    }
-
-    private fun createMapLifeCycleCallback(): MapLifeCycleCallback {
-        return object : MapLifeCycleCallback() {
-            override fun onMapDestroy() {}
-
-            override fun onMapError(error: Exception?) {}
-        }
-    }
-
-    private fun createMapReadyCallback(): KakaoMapReadyCallback {
-        return object : KakaoMapReadyCallback() {
-            override fun onMapReady(kakaoMap: KakaoMap) {
-                kakaoMapDeferred.complete(kakaoMap)
-            }
-        }
-    }
-
-    private fun updateLabelsToMap(labelManager: LabelManager, latLng: LatLng) {
-        val styles =
-            LabelStyles.from(
-                LabelStyle.from(R.drawable.marker).setZoomLevel(8),
-            )
-
-        val labelOptions =
-            LabelOptions.from(
-                LatLng.from(latLng),
-            )
-                .setStyles(styles)
-
-        labelManager.layer?.removeAll()
-        labelManager.layer?.addLabel(labelOptions)
-    }
-
-    private fun updateMapLocation(kakaoMap: KakaoMap, coordinates: Coordinates) {
-        val newLatLng = LatLng.from(coordinates.latitude, coordinates.longitude)
-        val labelManager = kakaoMap.labelManager
-
-        kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(newLatLng))
-
-        if (labelManager != null) updateLabelsToMap(labelManager, newLatLng)
-    }
-
     private fun setupObserves() {
         collectAccompanyInfo()
-        collectCoordinates()
-        collectStatusMessage()
+        collectRunningReservation()
+    }
+
+    private fun collectRunningReservation() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                liveCompanionViewModel.runningReservation.collect { reservationInfo ->
+                    if (reservationInfo != null) {
+                        binding.notCompanionTextView.visibility = View.GONE
+                        binding.managerStatusLayout.visibility = View.VISIBLE
+                        binding.patientNameTextView.text = reservationInfo.patient.patientName
+
+                        liveCompanionViewModel.updateAccompanyInfo(reservationInfo.reservationId)
+                        liveCompanionViewModel.reservationId = reservationInfo.reservationId
+
+                        this.cancel()
+                    }
+                }
+            }
+        }
     }
 
     private fun collectAccompanyInfo() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                liveCompanionViewModel.accompanyInfo.collectLatest { accompanyInfo ->
-                    val name = accompanyInfo.reservationInfo.patient.patientName
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                liveCompanionViewModel.accompanyInfo.collect { accompanyInfoList ->
+                    if (accompanyInfoList.isNullOrEmpty()) binding.liveCompanionRecyclerView.visibility = View.GONE
+                    else {
+                        val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREAN)
 
-                    liveCompanionViewModel.updateCoordinates(
-                        accompanyInfo.latitude,
-                        accompanyInfo.longitude
-                    )
+                        binding.liveCompanionRecyclerView.visibility = View.VISIBLE
 
-                    updateManagerStatus(name)
+                        (binding.liveCompanionRecyclerView.adapter as? LiveCompanionRecyclerViewAdapter)?.submitList(
+                            accompanyInfoList.map {
+                                DateFormatter.formatDate(it.statusDate, outputFormat = dateFormat) +
+                                    " " + it.statusDescribe
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
-
-    private fun collectCoordinates() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                val kakaoMap = kakaoMapDeferred.await()
-
-                liveCompanionViewModel.coordinates.collectLatest { coordinates ->
-                    updateMapLocation(kakaoMap, coordinates)
-                }
-            }
-        }
-    }
-
-    private fun collectStatusMessage() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                liveCompanionViewModel.statusMessages.collectLatest { statusMessages ->
-                    (binding.liveCompanionRecyclerView.adapter as? LiveCompanionRecyclerViewAdapter)?.submitList(
-                        statusMessages
-                    )
-                    binding.liveCompanionRecyclerView.visibility =
-                        if (statusMessages.isEmpty()) View.GONE else View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun updateManagerStatus(name: String) {
-        binding.patientNameTextView.text = name
     }
 
     private fun setLiveCompanionRecyclerViewAdapter() {
@@ -154,58 +93,38 @@ class LiveCompanionActivity : AppCompatActivity() {
 
     private fun setClickListener() {
         setCompanionStatusInputFormClickListener()
-        setCompanionCompleteBtnClickListener()
     }
 
     private fun setCompanionStatusInputFormClickListener() {
         binding.companionStatusInputBtn.setOnClickListener {
-            val formattedDate = getCurrentFormattedDateTime()
-            val message = formattedDate + " " + binding.companionStatusInputEditText.text
+            val statusDescribe = binding.companionStatusInputEditText.text.toString().trim()
 
-            liveCompanionViewModel.addStatusMessage(message)
+            if (statusDescribe.isEmpty()) {
+                Toast.makeText(this, "상태를 입력해 주세요", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val currentDate =
+                DateFormatter.formatDate(LocalDateTime.now(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            val runningId = liveCompanionViewModel.reservationId
+
+            if (runningId.isNullOrEmpty()) {
+                Toast.makeText(this, "진행 중인 예약이 조회되지 않습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            liveCompanionViewModel.postAccompanyInfo(
+                runningId,
+                AccompanyDto("병원 이동", statusDate = currentDate, statusDescribe = statusDescribe)
+            )
 
             binding.companionStatusInputEditText.text.clear()
         }
-    }
-
-    // 다이얼 로그에 예약 정보도 같이 전달
-    private fun setCompanionCompleteBtnClickListener() {
-        binding.completeCompanionBtn.setOnClickListener {
-            val reservationInfo = liveCompanionViewModel.accompanyInfo.value.reservationInfo
-            val companionCompleteDialog = CompanionCompleteDialog.newInstance(reservationInfo)
-
-            stopLocationService()
-            companionCompleteDialog.show(supportFragmentManager,"CompanionCompleteDialog")
-        }
-    }
-
-    private fun stopLocationService(){
-        //val intent = Intent(this, LocationUpdateService::class.java)
-        this.stopService(intent)
-    }
-
-    private fun getCurrentFormattedDateTime(): String {
-        val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yy.MM.dd HH:mm", Locale.KOREAN)
-
-        return dateFormat.format(currentTime)
     }
 
     private fun navigateToPrevious() {
         binding.mapPreviousBtn.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-    }
-
-    @Override
-    override fun onResume() {
-        super.onResume()
-        binding.mapView.resume()
-    }
-
-    @Override
-    public override fun onPause() {
-        super.onPause()
-        binding.mapView.pause()
     }
 }

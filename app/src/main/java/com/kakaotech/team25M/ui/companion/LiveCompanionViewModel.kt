@@ -1,62 +1,70 @@
 package com.kakaotech.team25M.ui.companion
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kakaotech.team25M.domain.model.ReservationStatus
+import com.kakaotech.team25M.domain.model.ReservationStatus.진행중
+import com.kakaotech.team25M.domain.repository.AccompanyRepository
+import com.kakaotech.team25M.domain.repository.ReservationRepository
+import com.kakaotech.team25M.data.network.dto.AccompanyDto
+import com.kakaotech.team25M.data.network.dto.ReservationStatusDto
 import com.kakaotech.team25M.domain.model.AccompanyInfo
-import com.kakaotech.team25M.domain.model.Coordinates
-import com.kakaotech.team25M.domain.model.Gender
-import com.kakaotech.team25M.domain.model.Patient
 import com.kakaotech.team25M.domain.model.ReservationInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LiveCompanionViewModel : ViewModel() {
-    private val _accompanyInfo = MutableStateFlow<AccompanyInfo>(AccompanyInfo())
-    val accompanyInfo: StateFlow<AccompanyInfo> = _accompanyInfo
+@HiltViewModel
+class LiveCompanionViewModel @Inject constructor(
+    private val reservationRepository: ReservationRepository,
+    private val accompanyRepository: AccompanyRepository
+) : ViewModel() {
+    private val _runningReservation = MutableStateFlow<ReservationInfo?>(null)
+    val runningReservation: StateFlow<ReservationInfo?> = _runningReservation
 
-    private val _coordinates = MutableStateFlow<Coordinates>(Coordinates())
-    val coordinates: StateFlow<Coordinates> = _coordinates
+    private val _accompanyInfo = MutableStateFlow<List<AccompanyInfo>?>(null)
+    val accompanyInfo: StateFlow<List<AccompanyInfo>?> = _accompanyInfo
 
-    private val _statusMessages = MutableStateFlow<List<String>>(emptyList())
-    val statusMessages: StateFlow<List<String>> = _statusMessages
+    var reservationId: String? = null
 
-    /**
-     * 뷰모델 테스트 데이터 입니다
-     */
     init {
-        updateAccompanyInfo(
-            AccompanyInfo(
-                isRunningService = false,
-                accompanyId = 7000,
-                ReservationInfo(
-                    departure = "부산 남구", destination = "부산대학교 병원", patient = Patient(
-                        patientId = 7,
-                        patientName = "문경자",
-                        patientGender = Gender.FEMALE,
-                        patientBirth = "640630",
-                        patientPhone = "01012345678"
-                    )
-                ),
-                detail = "추가 요청 사항 없습니다.",
-                latitude = 35.78,
-                longitude = 127.108621
-            )
-        )
+        getFilteredRunningReservation()
     }
 
-    fun updateAccompanyInfo(accompanyInfo: AccompanyInfo) {
-        _accompanyInfo.value = accompanyInfo
+    fun getFilteredRunningReservation() {
+        viewModelScope.launch {
+            _runningReservation.value =
+                reservationRepository.getReservationsFlow().firstOrNull()
+                    ?.firstOrNull { it.reservationStatus == 진행중 }
+        }
     }
 
-    fun updateCoordinates(latitude: Double, longitude: Double) {
-        _coordinates.value.latitude = latitude
-        _coordinates.value.longitude = longitude
+    fun changeReservation(reservationId: String, status: ReservationStatus) {
+        viewModelScope.launch {
+            reservationRepository.changeReservation(reservationId, ReservationStatusDto(status.toString()))
+        }
     }
 
-    fun updateStatusMessages(messages: List<String>) {
-        _statusMessages.value = messages
+    fun postAccompanyInfo(reservationId: String, accompanyDto: AccompanyDto) {
+        viewModelScope.launch {
+            accompanyRepository.postAccompanyInfo(reservationId, accompanyDto)
+            updateAccompanyInfo(reservationId)
+        }
     }
 
-    fun addStatusMessage(message: String) {
-        _statusMessages.value += message
+    fun updateAccompanyInfo(reservationId: String) {
+        viewModelScope.launch {
+            _accompanyInfo.value = accompanyRepository.getAccompanyFlow(reservationId).firstOrNull()
+        }
     }
 }

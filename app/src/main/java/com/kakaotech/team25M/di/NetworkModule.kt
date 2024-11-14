@@ -3,6 +3,9 @@ package com.kakaotech.team25M.di
 import androidx.datastore.core.DataStore
 import com.kakaotech.team25M.BuildConfig
 import com.kakaotech.team25M.TokensProto.Tokens
+import com.kakaotech.team25M.data.network.services.AccompanyService
+import com.kakaotech.team25M.data.network.services.ReportService
+import com.kakaotech.team25M.data.network.services.ReservationService
 import com.kakaotech.team25M.data.network.authenticator.HttpAuthenticator
 import com.kakaotech.team25M.data.network.interceptor.TokenInterceptor
 import com.kakaotech.team25M.data.network.services.ManagerInformationService
@@ -73,6 +76,24 @@ object NetworkModule {
     @Singleton
     fun provideManagerService(@GeneralRetrofit retrofit: Retrofit): ManagerService {
         return retrofit.create(ManagerService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccompanyService(@GeneralRetrofit retrofit: Retrofit): AccompanyService {
+        return retrofit.create(AccompanyService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReservationService(@GeneralRetrofit retrofit: Retrofit): ReservationService {
+        return retrofit.create(ReservationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReportService(@GeneralRetrofit retrofit: Retrofit): ReportService {
+        return retrofit.create(ReportService::class.java)
     }
 
     @Provides
