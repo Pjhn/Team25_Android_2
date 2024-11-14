@@ -6,18 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ItemReservationStatusBinding
-import com.kakaotech.team25M.domain.model.AccompanyInfo
+import com.kakaotech.team25M.domain.model.ReservationInfo
+import com.kakaotech.team25M.domain.model.ReservationStatus.*
 import com.kakaotech.team25M.ui.status.interfaces.OnCompanionStartClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-class ReservationStatusRecyclerViewAdapter (
+class ReservationStatusRecyclerViewAdapter(
     private val companionStartClickListener: OnCompanionStartClickListener,
     private val detailsClickListener: OnShowDetailsClickListener,
 ) : ListAdapter<
-    AccompanyInfo,
+    ReservationInfo,
     ReservationStatusRecyclerViewAdapter.ReservationStatusViewHolder,
     >(DiffCallback()) {
 
@@ -28,19 +28,20 @@ class ReservationStatusRecyclerViewAdapter (
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: AccompanyInfo) {
-            val dateFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
-            val isRunning = item.isRunningService
-            binding.reservationDateTextView.text = dateFormat.format(item.reservationInfo.serviceDate)
-            binding.userNameTextView.text = item.reservationInfo.patient.patientName
+        fun bind(item: ReservationInfo) {
+            binding.reservationDateTextView.text = DateFormatter.formatDate(item.reservationDate)
+            binding.userNameTextView.text = item.patient.patientName
 
+            when (item.reservationStatus) {
+                진행중 -> {
+                    binding.companionStartBtn.visibility = View.GONE
+                    binding.companionCompleteBtn.visibility = View.VISIBLE
+                }
 
-            if (isRunning) {
-                binding.companionStartBtn.visibility = View.GONE
-                binding.companionCompleteBtn.visibility = View.VISIBLE
-            } else {
-                binding.companionStartBtn.visibility = View.VISIBLE
-                binding.companionCompleteBtn.visibility = View.GONE
+                else -> {
+                    binding.companionStartBtn.visibility = View.VISIBLE
+                    binding.companionCompleteBtn.visibility = View.GONE
+                }
             }
 
             binding.companionStartBtn.setOnClickListener {
@@ -52,7 +53,7 @@ class ReservationStatusRecyclerViewAdapter (
             }
 
             binding.showDetailsBtn.setOnClickListener {
-                detailsClickListener.onDetailsClicked(item.reservationInfo)
+                detailsClickListener.onDetailsClicked(item)
             }
         }
     }
@@ -78,19 +79,19 @@ class ReservationStatusRecyclerViewAdapter (
         holder.bind(item)
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<AccompanyInfo>() {
+    class DiffCallback : DiffUtil.ItemCallback<ReservationInfo>() {
         override fun areItemsTheSame(
-            oldItem: AccompanyInfo,
-            newItem: AccompanyInfo,
+            oldItem: ReservationInfo,
+            newItem: ReservationInfo,
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: AccompanyInfo,
-            newItem: AccompanyInfo,
+            oldItem: ReservationInfo,
+            newItem: ReservationInfo,
         ): Boolean {
-            return oldItem.isRunningService == newItem.isRunningService
+            return oldItem == newItem
         }
     }
 }

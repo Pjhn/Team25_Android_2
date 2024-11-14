@@ -5,11 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ItemCompanionCompleteHistoryBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class CompanionCompleteHistoryRecyclerViewAdapter (
     private val detailsClickListener: OnShowDetailsClickListener
@@ -24,10 +23,8 @@ class CompanionCompleteHistoryRecyclerViewAdapter (
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ReservationInfo) {
-            val dateFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
-
             binding.userNameTextView.text = item.patient.patientName
-            binding.reservationDateTextView.text = dateFormat.format(item.serviceDate)
+            binding.reservationDateTextView.text = DateFormatter.formatDate(item.reservationDate)
 
             binding.showDetailsBtn.setOnClickListener {
                 detailsClickListener.onDetailsClicked(item)

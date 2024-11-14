@@ -1,8 +1,10 @@
 [versions]
 activityKtx = "1.9.2"
 agp = "8.3.2"
+auth = "2.20.35"
 awsAndroidSdkCognito = "2.77.0"
 awsAndroidSdkS3 = "2.77.0"
+coreTesting = "2.2.0"
 glide = "4.12.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -10,6 +12,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+kotlinxCoroutinesTest = "1.6.0"
 lifecycleViewmodelKtx = "2.8.6"
 material = "1.12.0"
 activity = "1.8.0"
@@ -18,6 +21,7 @@ kakaoSdk = "2.20.3"
 kakaoMap = "2.11.9"
 hilt = "2.48.1"
 ksp = "1.9.0-1.0.13"
+mockk = "1.13.4"
 playServicesLocation = "21.0.1"
 datastorePreferences = "1.0.0"
 ktlint= "12.1.0"
@@ -29,7 +33,9 @@ fragmentKtx = "1.8.3"
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+auth = { module = "software.amazon.awssdk:auth", version.ref = "auth" }
 aws-android-sdk-cognito = { module = "com.amazonaws:aws-android-sdk-cognito", version.ref = "awsAndroidSdkCognito" }
 aws-android-sdk-core = { module = "com.amazonaws:aws-android-sdk-core", version.ref = "awsAndroidSdkCognito" }
 aws-android-sdk-mobile-client = { module = "com.amazonaws:aws-android-sdk-mobile-client", version.ref = "awsAndroidSdkCognito" }
@@ -40,6 +46,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -50,6 +57,7 @@ dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", ve
 google-play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 protobuf-javalite = { group = "com.google.protobuf", name = "protobuf-javalite", version.ref = "protobufJavalite" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 

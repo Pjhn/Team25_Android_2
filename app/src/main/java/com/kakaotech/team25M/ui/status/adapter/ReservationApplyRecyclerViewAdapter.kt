@@ -5,12 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.kakaotech.team25M.data.util.DateFormatter
 import com.kakaotech.team25M.databinding.ItemReservationApplyBinding
 import com.kakaotech.team25M.domain.model.ReservationInfo
 import com.kakaotech.team25M.ui.status.interfaces.OnReservationApplyClickListener
 import com.kakaotech.team25M.ui.status.interfaces.OnShowDetailsClickListener
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class ReservationApplyRecyclerViewAdapter (
     private val reservationApplyClickListener: OnReservationApplyClickListener,
@@ -27,10 +26,8 @@ class ReservationApplyRecyclerViewAdapter (
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ReservationInfo) {
-            val dateFormat = SimpleDateFormat("M월 d일 a h시", Locale.KOREAN)
-
             binding.userNameTextView.text = item.patient.patientName
-            binding.reservationDateTextView.text = dateFormat.format(item.serviceDate)
+            binding.reservationDateTextView.text = DateFormatter.formatDate(item.reservationDate)
 
             binding.acceptBtn.setOnClickListener {
                 reservationApplyClickListener.onAcceptClicked(item)

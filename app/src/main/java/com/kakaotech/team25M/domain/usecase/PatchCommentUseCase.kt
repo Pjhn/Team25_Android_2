@@ -7,7 +7,7 @@ import javax.inject.Inject
 class PatchCommentUseCase @Inject constructor(
     private val managerInformationRepository: ManagerInformationRepository
 ) {
-    suspend operator fun invoke(patchCommentDto: PatchCommentDto): Result<String?> {
-        return managerInformationRepository.patchComment(patchCommentDto)
+    suspend operator fun invoke(comment: String): Result<String?> {
+        return managerInformationRepository.patchComment(PatchCommentDto(comment))
     }
 }

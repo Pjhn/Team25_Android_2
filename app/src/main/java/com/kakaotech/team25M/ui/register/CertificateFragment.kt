@@ -3,11 +3,14 @@ package com.kakaotech.team25M.ui.register
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.text.bold
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -38,6 +41,65 @@ class CertificateFragment : Fragment() {
         observeRegistrationStatus()
         navigateToPrevious()
         setRegisterClickListener()
+        setPrivacyClickListener()
+        setThirdPrivacyClickListener()
+    }
+
+    private fun setPrivacyClickListener() {
+        binding.detailsButton.setOnClickListener {
+            val message = SpannableStringBuilder()
+                .bold { append("개인정보 수집 목적:\n") }
+                .append("서비스 제공\n\n")
+                .bold { append("수집 항목:\n") }
+                .append(
+                    "이름, 성별, 프로필 이미지, 증명서 이미지\n" +
+                        "자기 소개, 경력, 근무 시간, 근무 지역\n\n"
+                )
+                .bold { append("보유 및 이용 기간:\n") }
+                .append("회원 탈퇴 3년 후 파기\n\n")
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("개인정보 수집 및 이용 동의")
+                .setMessage(message)
+                .setPositiveButton("확인", null)
+                .show()
+        }
+    }
+
+    private fun setThirdPrivacyClickListener() {
+        binding.thirdDetailsButton.setOnClickListener {
+            val message = SpannableStringBuilder()
+                // 제공받는 자 (제목)
+                .append("제공받는 자:\n")
+                // 내용
+                .bold { append("메디투게더 APP 이용자\n\n") }
+
+                // 제공받는 자의 이용 목적 (제목)
+                .append("제공받는 자의 개인정보 이용 목적:\n")
+                // 내용
+                .bold { append("서비스 이용 및 관리\n\n") }
+
+                // 제공하는 개인정보 항목 (제목)
+                .append("제공하는 개인정보 항목:\n")
+                // 내용
+                .bold {
+                    append(
+                        "이름, 성별, 프로필 이미지, 증명서 이미지\n" +
+                            "자기 소개, 경력, 근무 시간, 근무 지역\n\n"
+                    )
+                }
+
+                // 보유 및 이용 기간 (제목)
+                .append("제공 받는자의 보유기간:\n")
+                // 내용
+                .bold { append("회원 탈퇴 3년 후 파기\n") }
+
+            AlertDialog.Builder(requireContext())
+                .setTitle("개인정보 제3자 제공 동의")
+                .setMessage(message)
+                .setPositiveButton("확인", null)
+                .show()
+        }
     }
 
     private fun loadInfo() {
@@ -79,9 +141,11 @@ class CertificateFragment : Fragment() {
         binding.registerFinishBtn.setOnClickListener {
             if (registerViewModel.isCertificateImageEmpty()) {
                 Toast.makeText(requireContext(), "증명서 이미지를 등록해주세요.", Toast.LENGTH_SHORT).show()
-            } else {
+            } else if(binding.privacyAgreementCheckbox.isChecked && binding.thirdPartyAgreementCheckbox.isChecked) {
                 registerViewModel.uploadImage()
                 Toast.makeText(requireContext(), "등록 신청 중입니다. 잠시만 기다려주세요.", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(requireContext(), "모든 항목에 동의해 주세요", Toast.LENGTH_SHORT).show()
             }
         }
     }

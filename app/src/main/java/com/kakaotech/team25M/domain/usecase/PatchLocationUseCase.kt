@@ -7,7 +7,7 @@ import javax.inject.Inject
 class PatchLocationUseCase @Inject constructor(
     private val managerInformationRepository: ManagerInformationRepository
 ) {
-    suspend operator fun invoke(patchLocationDto: PatchLocationDto): Result<String?> {
-        return managerInformationRepository.patchLocation(patchLocationDto)
+    suspend operator fun invoke(sido: String, sigungu: String): Result<String?> {
+        return managerInformationRepository.patchLocation(PatchLocationDto("$sido $sigungu"))
     }
 }

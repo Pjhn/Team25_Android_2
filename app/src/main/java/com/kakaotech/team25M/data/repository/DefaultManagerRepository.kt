@@ -2,7 +2,6 @@ package com.kakaotech.team25M.data.repository
 
 import android.util.Log
 import com.kakaotech.team25M.data.network.dto.ManagerRegisterDto
-import com.kakaotech.team25M.data.network.dto.PatchImageDto
 import com.kakaotech.team25M.data.network.services.ManagerService
 import com.kakaotech.team25M.domain.repository.ManagerRepository
 import javax.inject.Inject
@@ -25,7 +24,7 @@ class DefaultManagerRepository @Inject constructor(
                     Result.failure(Exception("Invalid response"))
                 }
             } else {
-                Log.e(TAG, "Registration failed with status code: ${response.code()}")
+                Log.e(TAG, "Registration failed with status code: ${response.toString()}")
                 Result.failure(Exception("Registration failed"))
             }
         } catch (e: Exception) {

@@ -1,5 +1,6 @@
 package com.kakaotech.team25M.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -10,6 +11,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.kakaotech.team25M.databinding.ActivityMainBinding
+import com.kakaotech.team25M.domain.model.ReservationStatus.완료
+import com.kakaotech.team25M.domain.model.ReservationStatus.진행중
 import com.kakaotech.team25M.ui.companion.LiveCompanionActivity
 import com.kakaotech.team25M.ui.login.LoginEntryActivity
 import com.kakaotech.team25M.ui.profile.ProfileActivity
@@ -30,12 +33,22 @@ class MainActivity : AppCompatActivity() {
 
         observeWithdrawEvent()
         observeName()
+        observeReservations()
         checkName()
         navigateToProfile()
         navigateToLiveCompanion()
         navigateToReservationStatus()
         setLogoutClickListener()
         setWithdrawClickListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        loadReservations()
+    }
+
+    private fun loadReservations() {
+        mainViewModel.updateReservations()
     }
 
     private fun navigateToProfile() {
@@ -59,6 +72,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun observeReservations() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.reservations.collect{ reservations ->
+                    if (!reservations.isNullOrEmpty()){
+                        val size = reservations.filter { it.reservationStatus != 완료  }.size
+                        binding.reservationStatusTextView.text = "확인된 예약이 ${size} 건 있습니다"
+
+                        val runningReservations = reservations.filter { it.reservationStatus == 진행중 }
+                        if (runningReservations.isNotEmpty()) {
+                            binding.realTimeCompanionStatusTextView.text = "동행을 진행하고 있습니다"
+                            binding.withdrawTextView.tag = false
+                        } else {
+                            binding.realTimeCompanionStatusTextView.text = "현재 동행중이 아닙니다."
+                            binding.withdrawTextView.tag = true
+                        }
+
+                    }
+                }
+            }
+        }
+    }
 
     private fun setLogoutClickListener() {
         binding.logoutTextView.setOnClickListener {
@@ -111,18 +147,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun setWithdrawClickListener() {
         binding.withdrawTextView.setOnClickListener {
-            val dialogBuilder = AlertDialog.Builder(this)
-                .setTitle("회원 탈퇴")
-                .setMessage("정말로 회원 탈퇴를 하시겠습니까?")
-                .setPositiveButton("확인") { _, _ ->
-                    mainViewModel.withdraw()
-                }
-                .setNegativeButton("취소") { dialog, _ ->
-                    dialog.dismiss()
-                }
+            val isEnabled = binding.withdrawTextView.tag as? Boolean ?: true
+            if (isEnabled) {
+                val dialogBuilder = AlertDialog.Builder(this)
+                    .setTitle("회원 탈퇴")
+                    .setMessage("정말로 회원 탈퇴를 하시겠습니까?")
+                    .setPositiveButton("확인") { _, _ ->
+                        mainViewModel.withdraw()
+                    }
+                    .setNegativeButton("취소") { dialog, _ ->
+                        dialog.dismiss()
+                    }
 
-            dialogBuilder.show()
-
+                dialogBuilder.show()
+            } else {
+                Toast.makeText(this, "진행중인 동행을 완료해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
+
 }
